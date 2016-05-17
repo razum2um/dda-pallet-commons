@@ -19,8 +19,8 @@
 
 (defn create-file-content
   ""
-  [rules]
+  [lines]
   (clojure.string/join
     \newline
-    rules
+    lines
     ))
