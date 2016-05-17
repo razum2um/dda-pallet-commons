@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.cm.util
+(ns org.domaindrivenarchitecture.pallet.crate.util
  )
 
 (defn create-file-content
