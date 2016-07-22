@@ -15,6 +15,7 @@
   :profiles {:dev
              {:dependencies
               [[org.clojure/test.check "0.9.0"]
+               [com.palletops/stevedore "0.8.0-beta.7"]
                [com.palletops/pallet "0.8.12" :classifier "tests"]]}
              :leiningen/reply
              {:dependencies [[org.slf4j/jcl-over-slf4j "1.7.21"]]
