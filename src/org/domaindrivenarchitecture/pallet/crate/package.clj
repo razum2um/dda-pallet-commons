@@ -21,5 +21,5 @@
 (defn update-and-upgrade
   "update and upgrade"
   []
-  (actions/exec-script "apt-get upgrade -y")
-  (actions/exec-script "apt-get update -y"))
+  (actions/exec-script "apt-get update -y")
+  (actions/exec-script "apt-get upgrade -y"))
