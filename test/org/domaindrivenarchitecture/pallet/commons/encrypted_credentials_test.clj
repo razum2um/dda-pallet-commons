@@ -27,5 +27,5 @@
 
 (deftest schema-test
  (testing 
-     (is (s/validate encryptable-credential sut/schema))
+     (is (s/validate sut/schema encryptable-credential))
      )) 
