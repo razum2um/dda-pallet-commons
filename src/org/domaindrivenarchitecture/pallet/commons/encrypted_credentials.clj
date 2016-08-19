@@ -25,20 +25,39 @@
     [clj-pgp.message :as pgp-msg]
  ))
 
-(def schema
+(s/defn encrypted? :- s/Bool
+  [message :- s/Str]
+  (if (empty? message)
+    false
+    (.startsWith message "-----BEGIN PGP MESSAGE-----" 0)))
+
+(s/defn unencrypted? :- s/Bool
+  [message :- s/Str]
+  (not (encrypted? message)))
+
+(def EncryptableCredential 
   {:account s/Str
    :secret s/Str})
 
+(def UnencryptedCredential 
+  {:account s/Str
+   :secret (s/pred unencrypted?)})
+
+(def EncryptedCredential 
+  {:account s/Str
+   :secret (s/pred encrypted?)})
+
+
+(s/defn encrypt-secret 
+  [public-key 
+   secret :- s/Str]
+  (pgp-msg/encrypt secret public-key :armor true))
+
+(s/defn encrypt :- EncryptedCredential
+  [pubkey :- s/Str
+   encryptable :- UnencryptedCredential]
+  (assoc encryptable :secret 
+         (encrypt-secret pubkey (get-in encryptable [:secret]))))
+
 (def keyring (keyring/load-secret-keyring (io/file "/home/mje/.gnupg/secring.gpg")))
 
-(def pubkey (second (keyring/list-public-keys keyring)))
-
-(def seckey (keyring/get-secret-key keyring (pgp/hex-id pubkey)))
-
-(def message
-     (pgp-msg/encrypt
-       "MeinTest" pubkey
-       :format :utf8
-       :cipher :aes-256
-       :compress :zip
-       :armor true))

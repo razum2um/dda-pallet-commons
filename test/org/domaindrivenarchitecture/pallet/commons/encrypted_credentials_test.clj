@@ -13,19 +13,44 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
-
-
 (ns org.domaindrivenarchitecture.pallet.commons.encrypted-credentials-test
   (:require
-    [schema.core :as s]
+    [clojure.java.io :as io]
     [clojure.test :refer :all]
+    [clojure.test.check.generators :as gen]
+    [schema.core :as s]
+    [byte-streams :refer [bytes=]]    
+    [clj-pgp.generate :as pgp-gen]
+    [clj-pgp.test.encryption-test-sceanrio :as test-scenario]
     [org.domaindrivenarchitecture.pallet.commons.encrypted-credentials :as sut]))
 
+
 (def encryptable-credential 
-  {:account "account identifier unencrypted" 
-   :secret "ascii armored & gpg encrypted"})
+ {:account "account identifier unencrypted" 
+  :secret "ascii armored & gpg encrypted"})
+
+(deftest encryptd?-test
+ (testing 
+   (is (sut/unencrypted? nil))
+   (is (sut/unencrypted? "xx"))
+   (is (sut/encrypted? "-----BEGIN PGP MESSAGE----- xx"))
+   ))
+
+(deftest encrypt-secret-test
+ (testing 
+   (is 
+     (sut/encrypted?
+       (sut/encrypt-secret test-scenario/pubkey "nobody can read this")))
+   ))
+
+
+(deftest encrypt-test
+ (testing 
+   (is (s/validate sut/EncryptedCredential
+                   (sut/encrypt test-scenario/pubkey encryptable-credential)))
+     ))
 
 (deftest schema-test
  (testing 
-     (is (s/validate sut/schema encryptable-credential))
+     (is (s/validate sut/EncryptableCredential encryptable-credential))
      )) 
