@@ -49,6 +49,19 @@
                    (sut/encrypt test-scenario/pubkey encryptable-credential)))
      ))
 
+(deftest decrypt-secret-test
+ (testing 
+   (is 
+     (sut/unencrypted?
+       (sut/decrypt-secret test-scenario/privkey (sut/encrypt-secret test-scenario/pubkey "nobody can read this"))))
+   ))
+
+(deftest decrypt-test
+ (testing 
+   (is (s/validate sut/UnencryptedCredential
+                   (sut/decrypt test-scenario/privkey (sut/encrypt test-scenario/pubkey encryptable-credential))))
+     ))
+
 (deftest secring-path-test
   (testing
     (is 

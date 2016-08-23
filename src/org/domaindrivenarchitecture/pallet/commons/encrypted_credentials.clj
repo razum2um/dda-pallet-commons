@@ -23,6 +23,7 @@
     [clj-pgp.core :as pgp]
     [clj-pgp.keyring :as keyring]
     [clj-pgp.message :as pgp-msg]
+    [org.domaindrivenarchitecture.config.commons.directory-model :as dir]
  ))
 
 (s/defn encrypted? :- s/Bool
@@ -73,22 +74,30 @@
 
 
 (s/defn encrypt-secret
-  "encrypt the secret."
-  [public-key 
+  "encrypt the secret. encryptor can be passphrase or public key."
+  [encryptors :- s/Str
    secret :- s/Str]
-  (pgp-msg/encrypt secret public-key :format :utf8 :armor true))
+  (pgp-msg/encrypt secret encryptors :format :utf8 :armor true))
 
 (s/defn encrypt :- EncryptedCredential
   "encrypt the secret part of encryptable."
-  [pubkey :- s/Str
+  [encryptors :- s/Str
    encryptable :- UnencryptedCredential]
   (assoc encryptable :secret 
-         (encrypt-secret pubkey (get-in encryptable [:secret]))))
+         (encrypt-secret encryptors (get-in encryptable [:secret]))))
 
 (s/defn decrypt-secret 
-  [private-key 
+  "decrypts the secret. decryptor can be passphrase or private key."
+  [decryptor :- s/Str
    secret :- s/Str]
-  (pgp-msg/decrypt secret private-key))
+  (pgp-msg/decrypt secret decryptor))
+
+(s/defn decrypt :- UnencryptedCredential
+  "decrypt the secret part of encryptable."
+  [decryptor :- s/Str
+   decryptable :- EncryptedCredential]
+  (assoc decryptable :secret 
+         (decrypt-secret decryptor (get-in decryptable [:secret]))))
 
 (defn load-secret-keyring [custom-location])
 
