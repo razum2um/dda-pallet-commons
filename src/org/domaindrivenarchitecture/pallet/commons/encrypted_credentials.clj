@@ -51,7 +51,7 @@
 (s/defn encrypt-secret 
   [public-key 
    secret :- s/Str]
-  (pgp-msg/encrypt secret public-key :armor true))
+  (pgp-msg/encrypt secret public-key :format :utf8 :armor true))
 
 (s/defn encrypt :- EncryptedCredential
   [pubkey :- s/Str
@@ -59,5 +59,10 @@
   (assoc encryptable :secret 
          (encrypt-secret pubkey (get-in encryptable [:secret]))))
 
-(def keyring (keyring/load-secret-keyring (io/file "/home/mje/.gnupg/secring.gpg")))
+(s/defn decrypt-secret 
+  [private-key 
+   secret :- s/Str]
+  (pgp-msg/decrypt secret private-key))
+
+(def keyring (keyring/load-secret-keyring (io/file "/home/hel/.gnupg/secring.gpg")))
 

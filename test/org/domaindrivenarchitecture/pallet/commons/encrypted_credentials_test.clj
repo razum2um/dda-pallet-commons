@@ -21,7 +21,7 @@
     [schema.core :as s]
     [byte-streams :refer [bytes=]]    
     [clj-pgp.generate :as pgp-gen]
-    [clj-pgp.test.encryption-test-sceanrio :as test-scenario]
+    [clj-pgp.test.encryption-test-scenario :as test-scenario]
     [org.domaindrivenarchitecture.pallet.commons.encrypted-credentials :as sut]))
 
 
