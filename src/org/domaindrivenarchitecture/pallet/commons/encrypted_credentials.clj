@@ -47,13 +47,39 @@
   {:account s/Str
    :secret (s/pred encrypted?)})
 
+(def EncryptionConfiguration 
+  {:user-home dir/NonRootDirectory
+   (s/optional-key :pallet-home) dir/NonRootDirectory
+   (s/optional-key :secring-path) s/Str
+   (s/optional-key :key-id) s/Str})
 
-(s/defn encrypt-secret 
+(defn default-encryption-configuration []
+  (let [user-home (get (System/getenv) "HOME" "~")
+        pallet-home (get (System/getenv) "PALLET_HOME")]
+  (merge
+    {:user-home (str user-home "/")}
+    (if (some? pallet-home) 
+      {:pallet-home (str pallet-home "/")}
+      {}))
+  ))
+
+(s/defn secring-path :- s/Str
+  [encryption-config :- EncryptionConfiguration]
+  (cond 
+    (contains? encryption-config :secring-path) (get-in encryption-config [:secring-path])
+    (contains? encryption-config :pallet-home) (str (get-in encryption-config [:pallet-home]) "secring.gpg")
+    :else (str (get-in encryption-config [:user-home]) ".gnupg/secring.gpg")
+    ))
+
+
+(s/defn encrypt-secret
+  "encrypt the secret."
   [public-key 
    secret :- s/Str]
   (pgp-msg/encrypt secret public-key :format :utf8 :armor true))
 
 (s/defn encrypt :- EncryptedCredential
+  "encrypt the secret part of encryptable."
   [pubkey :- s/Str
    encryptable :- UnencryptedCredential]
   (assoc encryptable :secret 
@@ -63,6 +89,8 @@
   [private-key 
    secret :- s/Str]
   (pgp-msg/decrypt secret private-key))
+
+(defn load-secret-keyring [custom-location])
 
 (def keyring (keyring/load-secret-keyring (io/file "/home/hel/.gnupg/secring.gpg")))
 
