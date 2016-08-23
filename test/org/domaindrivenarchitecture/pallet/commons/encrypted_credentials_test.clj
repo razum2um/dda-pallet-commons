@@ -43,14 +43,30 @@
        (sut/encrypt-secret test-scenario/pubkey "nobody can read this")))
    ))
 
-
 (deftest encrypt-test
  (testing 
    (is (s/validate sut/EncryptedCredential
                    (sut/encrypt test-scenario/pubkey encryptable-credential)))
      ))
 
+(deftest secring-path-test
+  (testing
+    (is 
+      (= "/var/lib/pallet/secring.gpg"
+         (sut/secring-path {:pallet-home "/var/lib/pallet/"
+                            :user-home "/home/user/"})))
+    (is 
+      (= "/home/user/.gnupg/secring.gpg"
+         (sut/secring-path {:user-home "/home/user/"})))
+    (is 
+      (= "/a/path.gpg"
+         (sut/secring-path {:pallet-home "/var/lib/pallet/"
+                            :user-home "/home/user/"
+                            :secring-path "/a/path.gpg"})))
+    ))
+
 (deftest schema-test
  (testing 
      (is (s/validate sut/EncryptableCredential encryptable-credential))
+     (is (s/validate sut/EncryptionConfiguration (sut/default-encryption-configuration)))
      )) 
