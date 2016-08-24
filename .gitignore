@@ -170,3 +170,5 @@ pom.xml.asc
 /bin/
 /bin/
 /.settings/
+/.classpath
+/.project

@@ -74,32 +74,19 @@
 
 
 (s/defn encrypt-secret
-  "encrypt the secret. encryptor can be passphrase or public key."
-  [encryptors :- s/Str
+  "encrypt the secret."
+  [public-key 
    secret :- s/Str]
-  (pgp-msg/encrypt secret encryptors :format :utf8 :armor true))
+  (pgp-msg/encrypt secret public-key :armor true))
 
 (s/defn encrypt :- EncryptedCredential
   "encrypt the secret part of encryptable."
-  [encryptors :- s/Str
+  [pubkey :- s/Str
    encryptable :- UnencryptedCredential]
   (assoc encryptable :secret 
-         (encrypt-secret encryptors (get-in encryptable [:secret]))))
-
-(s/defn decrypt-secret 
-  "decrypts the secret. decryptor can be passphrase or private key."
-  [decryptor :- s/Str
-   secret :- s/Str]
-  (pgp-msg/decrypt secret decryptor))
-
-(s/defn decrypt :- UnencryptedCredential
-  "decrypt the secret part of encryptable."
-  [decryptor :- s/Str
-   decryptable :- EncryptedCredential]
-  (assoc decryptable :secret 
-         (decrypt-secret decryptor (get-in decryptable [:secret]))))
+         (encrypt-secret pubkey (get-in encryptable [:secret]))))
 
 (defn load-secret-keyring [custom-location])
 
-(def keyring (keyring/load-secret-keyring (io/file "/home/hel/.gnupg/secring.gpg")))
+(def keyring (keyring/load-secret-keyring (io/file "/home/mje/.gnupg/secring.gpg")))
 
