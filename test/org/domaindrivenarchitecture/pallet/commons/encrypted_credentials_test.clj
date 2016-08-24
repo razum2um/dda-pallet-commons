@@ -21,7 +21,7 @@
     [schema.core :as s]
     [byte-streams :refer [bytes=]]    
     [clj-pgp.generate :as pgp-gen]
-    [clj-pgp.test.encryption-test-sceanrio :as test-scenario]
+    [clj-pgp.test.encryption-test-scenario :as test-scenario]
     [org.domaindrivenarchitecture.pallet.commons.encrypted-credentials :as sut]))
 
 
@@ -47,6 +47,19 @@
  (testing 
    (is (s/validate sut/EncryptedCredential
                    (sut/encrypt test-scenario/pubkey encryptable-credential)))
+     ))
+
+(deftest decrypt-secret-test
+ (testing 
+   (is 
+     (sut/unencrypted?
+       (sut/decrypt-secret test-scenario/privkey (sut/encrypt-secret test-scenario/pubkey "nobody can read this"))))
+   ))
+
+(deftest decrypt-test
+ (testing 
+   (is (s/validate sut/UnencryptedCredential
+                   (sut/decrypt test-scenario/privkey (sut/encrypt test-scenario/pubkey encryptable-credential))))
      ))
 
 (deftest secring-path-test
