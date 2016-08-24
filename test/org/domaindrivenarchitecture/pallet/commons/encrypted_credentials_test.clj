@@ -64,18 +64,25 @@
 
 (deftest secring-path-test
   (testing
-    (is 
-      (= "/var/lib/pallet/secring.gpg"
-         (sut/secring-path {:pallet-home "/var/lib/pallet/"
-                            :user-home "/home/user/"})))
-    (is 
-      (= "/home/user/.gnupg/secring.gpg"
-         (sut/secring-path {:user-home "/home/user/"})))
-    (is 
-      (= "/a/path.gpg"
-         (sut/secring-path {:pallet-home "/var/lib/pallet/"
-                            :user-home "/home/user/"
-                            :secring-path "/a/path.gpg"})))
+    (is (= "/var/lib/pallet/secring.gpg"
+           (sut/secring-path {:pallet-home "/var/lib/pallet/"
+                              :user-home "/home/user/"})))
+    (is (= "/home/user/.gnupg/secring.gpg"
+           (sut/secring-path {:user-home "/home/user/"})))
+    (is (= "/a/path.gpg"
+           (sut/secring-path {:pallet-home "/var/lib/pallet/"
+                              :user-home "/home/user/"
+                              :secring-path "/a/path.gpg"})))
+    ))
+
+(deftest secret-key-ring-test
+  (testing
+    (is (= 2
+           (count
+                (clj-pgp.keyring/list-public-keys 
+                  (sut/load-secret-keyring {:pallet-home "/var/lib/pallet/"
+                      :user-home "/home/user/"
+                      :secring-path "clj_pgp/test/keys/secring.gpg"})))))
     ))
 
 (deftest schema-test

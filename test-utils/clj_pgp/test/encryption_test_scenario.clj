@@ -25,7 +25,7 @@
     [clj-pgp.keyring :as keyring]
     [clj-pgp.tags :as tags]    
     [clj-pgp.message :as pgp-msg]
-    [org.domaindrivenarchitecture.pallet.commons.encrypted-credentials :as sut]))
+    [org.domaindrivenarchitecture.pallet.commons.encrypted-credentials :as encrypted-credentials]))
 
 
 (def pubring
@@ -35,12 +35,10 @@
       keyring/load-public-keyring))
 
 
-(def secring
-  (-> "clj_pgp/test/keys/secring.gpg"
-      io/resource
-      io/file
-      keyring/load-secret-keyring))
-
+(def secring 
+  (encrypted-credentials/load-secret-keyring
+    (merge (encrypted-credentials/default-encryption-configuration)
+           {:secring-path "clj_pgp/test/keys/secring.gpg"})))
 
 (defn get-privkey
   [id]

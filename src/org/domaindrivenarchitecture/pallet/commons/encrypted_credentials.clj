@@ -72,10 +72,14 @@
     :else (str (get-in encryption-config [:user-home]) ".gnupg/secring.gpg")
     ))
 
+(s/defn load-secret-keyring 
+  [encryption-config :- EncryptionConfiguration]
+  (keyring/load-secret-keyring 
+    (io/file (io/resource (secring-path encryption-config)))))
 
 (s/defn encrypt-secret
   "encrypt the secret. encryptor can be passphrase or public key."
-  [encryptors :- s/Str
+  [encryptors :- [s/Str]
    secret :- s/Str]
   (pgp-msg/encrypt secret encryptors :format :utf8 :armor true))
 
@@ -98,5 +102,3 @@
    decryptable :- EncryptedCredential]
   (assoc decryptable :secret 
          (decrypt-secret decryptor (get-in decryptable [:secret]))))
-
-(defn load-secret-keyring [custom-location])
