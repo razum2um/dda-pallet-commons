@@ -48,8 +48,14 @@
 
 (def master-pubkey (keyring/get-public-key pubring "923b1c1c4392318a"))
 
-(def pubkey  (keyring/get-public-key secring "3f40edec41c6cb7d"))
-(def seckey  (keyring/get-secret-key secring pubkey))
+(def pubkey  (encrypted-credentials/get-secret-key
+               {:user-home "/home/user/"
+               :secring-path "clj_pgp/test/keys/secring.gpg"
+               :key-id "3f40edec41c6cb7d"}))
+(def seckey  (encrypted-credentials/get-secret-key
+               {:user-home "/home/user/"
+               :secring-path "clj_pgp/test/keys/secring.gpg"
+               :key-id "3f40edec41c6cb7d"}))
 (def privkey (pgp/unlock-key seckey "test password"))
 
 

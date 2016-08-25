@@ -85,6 +85,14 @@
     (load-secret-keyring encryption-config)
     (get-in encryption-config [:key-id])))
 
+(s/defn get-secret-key
+  "get the private key from given configuration."
+  [encryption-config :- EncryptionConfiguration]
+  (keyring/get-secret-key
+    (load-secret-keyring encryption-config)
+    (get-in encryption-config [:key-id])))
+
+
 (s/defn encrypt-secret
   "encrypt the secret. encryptor can be passphrase or public key."
   [encryptors :- [s/Str]

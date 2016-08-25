@@ -55,6 +55,15 @@
    (is 
      (sut/unencrypted?
        (sut/decrypt-secret test-scenario/privkey (sut/encrypt-secret test-scenario/pubkey "nobody can read this"))))
+   (is 
+     (sut/unencrypted?
+       (sut/decrypt-secret
+         "test password"
+         (sut/get-secret-key
+              {:user-home "/home/user/"
+              :secring-path "clj_pgp/test/keys/secring.gpg"
+              :key-id "3f40edec41c6cb7d"})
+         (sut/encrypt-secret test-scenario/pubkey "nobody can read this"))))
    ))
 
 (deftest decrypt-test
@@ -87,6 +96,12 @@
     (is (= 4557904421870553981
           (core/key-id 
             (sut/get-public-key {:user-home "/home/user/"
+              :secring-path "clj_pgp/test/keys/secring.gpg"
+              :key-id "3f40edec41c6cb7d"}))))
+    (is (= 4557904421870553981
+          (core/key-id 
+            (sut/get-secret-key
+              {:user-home "/home/user/"
               :secring-path "clj_pgp/test/keys/secring.gpg"
               :key-id "3f40edec41c6cb7d"}))))
     ))
