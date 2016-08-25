@@ -19,7 +19,8 @@
     [clojure.test :refer :all]
     [clojure.test.check.generators :as gen]
     [schema.core :as s]
-    [byte-streams :refer [bytes=]]    
+    [byte-streams :refer [bytes=]]
+    [clj-pgp.core :as core]
     [clj-pgp.generate :as pgp-gen]
     [clj-pgp.test.encryption-test-scenario :as test-scenario]
     [org.domaindrivenarchitecture.pallet.commons.encrypted-credentials :as sut]))
@@ -83,6 +84,11 @@
                   (sut/load-secret-keyring {:pallet-home "/var/lib/pallet/"
                       :user-home "/home/user/"
                       :secring-path "clj_pgp/test/keys/secring.gpg"})))))
+    (is (= 4557904421870553981
+          (core/key-id 
+            (sut/get-public-key {:user-home "/home/user/"
+              :secring-path "clj_pgp/test/keys/secring.gpg"
+              :key-id "3f40edec41c6cb7d"}))))
     ))
 
 (deftest schema-test

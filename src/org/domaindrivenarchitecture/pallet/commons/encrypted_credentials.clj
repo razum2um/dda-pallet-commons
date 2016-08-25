@@ -72,10 +72,18 @@
     :else (str (get-in encryption-config [:user-home]) ".gnupg/secring.gpg")
     ))
 
-(s/defn load-secret-keyring 
+(s/defn load-secret-keyring
+  "Load the secret keyring from configured position."
   [encryption-config :- EncryptionConfiguration]
   (keyring/load-secret-keyring 
     (io/file (io/resource (secring-path encryption-config)))))
+
+(s/defn get-public-key
+  "get the public key from given configuration."
+  [encryption-config :- EncryptionConfiguration]
+  (keyring/get-public-key
+    (load-secret-keyring encryption-config)
+    (get-in encryption-config [:key-id])))
 
 (s/defn encrypt-secret
   "encrypt the secret. encryptor can be passphrase or public key."

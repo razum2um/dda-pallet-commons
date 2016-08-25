@@ -34,7 +34,6 @@
       io/file
       keyring/load-public-keyring))
 
-
 (def secring 
   (encrypted-credentials/load-secret-keyring
     (merge (encrypted-credentials/default-encryption-configuration)
