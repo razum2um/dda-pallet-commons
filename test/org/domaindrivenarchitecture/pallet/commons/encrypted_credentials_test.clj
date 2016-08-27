@@ -58,12 +58,12 @@
    (is 
      (sut/unencrypted?
        (sut/decrypt-secret
-         "test password"
          (sut/get-secret-key
               {:user-home "/home/user/"
               :secring-path "clj_pgp/test/keys/secring.gpg"
               :key-id "3f40edec41c6cb7d"})
-         (sut/encrypt-secret test-scenario/pubkey "nobody can read this"))))
+         (sut/encrypt-secret test-scenario/pubkey "nobody can read this")
+         "test password")))
    ))
 
 (deftest decrypt-test

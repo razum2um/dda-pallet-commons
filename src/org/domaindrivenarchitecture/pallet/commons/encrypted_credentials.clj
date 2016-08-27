@@ -109,12 +109,15 @@
 (s/defn decrypt-secret 
   "decrypts the secret. decryptor can be passphrase or private key."
   [decryptor :- s/Str
-   secret :- s/Str]
-  (pgp-msg/decrypt secret decryptor))
+   secret :- s/Str & keyphrase]
+  (if (nil? keyphrase) 
+  (pgp-msg/decrypt secret decryptor)
+  (pgp-msg/decrypt secret (apply pgp/unlock-key decryptor keyphrase))
+  ))
 
 (s/defn decrypt :- UnencryptedCredential
   "decrypt the secret part of encryptable."
   [decryptor :- s/Str
-   decryptable :- EncryptedCredential]
+   decryptable :- EncryptedCredential & keyphrase ]
   (assoc decryptable :secret 
-         (decrypt-secret decryptor (get-in decryptable [:secret]))))
+         (apply decrypt-secret decryptor (get-in decryptable [:secret]) keyphrase)))
