@@ -107,7 +107,8 @@
          (encrypt-secret encryptors (get-in encryptable [:secret]))))
 
 (s/defn decrypt-secret 
-  "decrypts the secret. decryptor can be passphrase or private key."
+  "decrypts the secret. decryptor can be passphrase or private key. 
+  alternatively you can provide a seckey as decryptor and the corresponding keyphrase for unlocking."
   [decryptor :- s/Str
    secret :- s/Str & keyphrase]
   (if (nil? keyphrase) 
@@ -116,7 +117,7 @@
   ))
 
 (s/defn decrypt :- UnencryptedCredential
-  "decrypt the secret part of encryptable."
+  "decrypt the secret part of encryptable. for decryptor options see decrypt-secret."
   [decryptor :- s/Str
    decryptable :- EncryptedCredential & keyphrase ]
   (assoc decryptable :secret 
