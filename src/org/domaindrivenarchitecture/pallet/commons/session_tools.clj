@@ -1,4 +1,4 @@
-(ns org.domaindrivenarchitecture.common.commons.session-tools
+(ns org.domaindrivenarchitecture.pallet.commons.session-tools
   (:require [clojure.xml :as xml]
             [clojure.pprint]
             [clojure.java.io]
