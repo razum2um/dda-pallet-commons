@@ -75,8 +75,11 @@
 (s/defn load-secret-keyring
   "Load the secret keyring from configured position."
   [encryption-config :- EncryptionConfiguration]
-  (keyring/load-secret-keyring 
-    (io/file (io/resource (secring-path encryption-config)))))
+  (let [secring-path (secring-path encryption-config)]
+    (keyring/load-secret-keyring 
+      (if (.exists (io/file secring-path))
+        (io/file secring-path)
+        (io/file (io/resource secring-path))))))
 
 (s/defn get-public-key
   "get the public key from given configuration."
