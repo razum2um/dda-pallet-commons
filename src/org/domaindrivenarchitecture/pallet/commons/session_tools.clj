@@ -1,8 +1,12 @@
 (ns org.domaindrivenarchitecture.pallet.commons.session-tools
-  (:require [clojure.xml :as xml]
-            [clojure.pprint]
-            [clojure.java.io]
-            [pallet.core.data-api :as da]))
+  (:require 
+    [schema.core :as s]
+    [clojure.xml :as xml]
+    [clojure.pprint]
+    [clojure.java.io]
+    [clojure.inspector :as inspector]
+    [pallet.core.data-api :as da]
+    [org.domaindrivenarchitecture.pallet.commons.pallet-schema :as ps]))
 
 (import java.io.StringWriter)
 
@@ -139,6 +143,21 @@
        (xml-groups session-data) 
        (xml-runs session-data)]
     )))
+
+(s/defn inspect-plan
+  "inspect a given server-spec"
+  [phase-plan :- ps/PhasePlanSpec]
+  (inspector/inspect-tree
+    phase-plan))
+
+(s/defn inspect-mock-server-spec
+  "inspect a given phase of crate"
+  [phase-plan :- ps/PhasePlanSpec
+   phase :- s/Keyword]
+  (inspector/inspect-tree
+    (da/explain-plan 
+      (get-in server-spec [:phases phase])
+      ["mock-node" "mock-group" "0.0.0.0" :ubuntu])))
 
 (defn explain-plan-xml
   "Explains the actions created from a plan-function using a mock without executing the actions."
