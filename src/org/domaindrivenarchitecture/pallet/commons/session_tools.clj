@@ -156,7 +156,7 @@
    phase :- s/Keyword]
   (inspector/inspect-tree
     (da/explain-plan 
-      (get-in server-spec [:phases phase])
+      (get-in phase-plan [:phases phase])
       ["mock-node" "mock-group" "0.0.0.0" :ubuntu])))
 
 (defn explain-plan-xml
