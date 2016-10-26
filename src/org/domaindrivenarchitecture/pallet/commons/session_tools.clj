@@ -6,6 +6,7 @@
     [clojure.java.io]
     [clojure.inspector :as inspector]
     [pallet.core.data-api :as da]
+    [pallet.node-value :as nv]
     [org.domaindrivenarchitecture.pallet.commons.pallet-schema :as ps]))
 
 (import java.io.StringWriter)
@@ -31,6 +32,9 @@
         (fn [vec k v] 
           (conj vec (struct xml/element :key {:name (xml-str k)} [(xml-cljmap v)]))) 
         '() cljmap))
+    
+    (nv/node-value? cljmap) ;a node value implements coll, but does not allow reduce
+    (xml-str cljmap)    
     
     (coll? cljmap)
     (struct xml/element 
