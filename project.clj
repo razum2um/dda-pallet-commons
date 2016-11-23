@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/dda-pallet-commons "0.2.1-SNAPSHOT"
+(defproject org.domaindrivenarchitecture/dda-pallet-commons "0.2.1"
   :description "common utils for dda pallet"
   :url "https://www.domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
@@ -8,7 +8,7 @@
                  [metosin/schema-tools "0.9.0"]
                  [mvxcvi/clj-pgp "0.8.3"]
                  [com.palletops/pallet "0.8.12"]
-                 [org.domaindrivenarchitecture/dda-config-commons "0.1.6"]
+                 [org.domaindrivenarchitecture/dda-config-commons "0.1.7"]
                  [ch.qos.logback/logback-classic "1.1.7"]]
   :source-paths ["src" "test-utils"]
   :repositories [["snapshots" :clojars]
