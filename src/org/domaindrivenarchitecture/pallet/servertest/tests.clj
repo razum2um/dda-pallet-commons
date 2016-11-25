@@ -19,7 +19,7 @@
     [pallet.crate :as crate]
     [pallet.actions :as actions]
     [pallet.stevedore :refer :all]
-    [org.domaindrivenarchitecture.pallet.servertest.resources :refer :all]
+    [org.domaindrivenarchitecture.pallet.servertest.facts :refer :all]
     [org.domaindrivenarchitecture.pallet.servertest.scripts.core :refer :all]))
 
 (defn- test-result-data

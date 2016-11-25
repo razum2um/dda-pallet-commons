@@ -1,6 +1,6 @@
-(ns org.domaindrivenarchitecture.pallet.servertest.resource.netstat
+(ns org.domaindrivenarchitecture.pallet.servertest.facts.netstat
   (:require
-    [org.domaindrivenarchitecture.pallet.servertest.resources :refer :all]
+    [org.domaindrivenarchitecture.pallet.servertest.facts :refer :all]
     [org.domaindrivenarchitecture.pallet.servertest.tests :refer :all]
     [pallet.stevedore :refer :all]
     [pallet.script :as script]

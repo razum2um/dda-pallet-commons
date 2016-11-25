@@ -17,7 +17,7 @@
 (ns org.domaindrivenarchitecture.pallet.servertest.test.netstat
   (:require
     [org.domaindrivenarchitecture.pallet.servertest.tests :as tests]
-    [org.domaindrivenarchitecture.pallet.servertest.resource.netstat :as netstat-res]
+    [org.domaindrivenarchitecture.pallet.servertest.facts.netstat :as netstat-res]
     [org.domaindrivenarchitecture.pallet.servertest.scripts.core :refer :all]))
 
 (defn parse-netstat
