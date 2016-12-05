@@ -92,7 +92,7 @@
 
 (defn- xml-action-result
   "Converts an action-result to xml after executing it."
-  [{:keys [script out exit error action-symbol context summary] :as action-result}]
+  [{:keys [script out exit error action-symbol context summary form] :as action-result}]
   (if
     (nil? script)
     (struct xml/element
@@ -109,6 +109,7 @@
 	      (if-not (nil? action-symbol) (struct xml/element :action-symbol {} [(xml-str action-symbol)]))
 	      (if-not (nil? context) (struct xml/element :context {} [(xml-str context)]))
 	      (if-not (nil? summary) (struct xml/element :summary {} [(xml-str summary)]))
+        (if-not (nil? form) (struct xml/element :form {} [(xml-str form)]))
        (struct xml/element :details {} [(xml-cljmap action-result)])
 	      ]))))
 
@@ -177,10 +178,10 @@
 (defn emit-xml-to-string [xml]
   (with-out-str (emit-xml-to-stdout xml)))
 
-(defn emit-xml-to-file [f xml]
+(defn emit-xml-to-file [file-name xml]
   "Writes xml to file and puts the xsl to the same directory."
-  (spit f (emit-xml-to-string xml))
+  (spit file-name (emit-xml-to-string xml))
   (spit 
-    (str (.getParent (clojure.java.io/file f)) "/session.xsl") 
+    (str (.getParent (clojure.java.io/file file-name)) "/session.xsl") 
     (slurp (clojure.java.io/resource "session.xsl")))
   )

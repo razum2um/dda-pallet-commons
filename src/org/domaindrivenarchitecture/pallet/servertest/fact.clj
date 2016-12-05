@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.servertest.facts
+(ns org.domaindrivenarchitecture.pallet.servertest.fact
   (:require
     [pallet.core.session :as session]
     [clojure.tools.logging :as logging]
