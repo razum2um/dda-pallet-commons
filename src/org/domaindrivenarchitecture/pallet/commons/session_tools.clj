@@ -185,3 +185,28 @@
     (str (.getParent (clojure.java.io/file file-name)) "/session.xsl") 
     (slurp (clojure.java.io/resource "session.xsl")))
   )
+
+(defn schema-keys [schema]
+  (map #(if (s/optional-key? %) (:k %) %) (keys schema)))
+
+(s/defn filter-for-schema
+  [schema value]
+  (into {}
+        (for [[k child-schema] schema
+              :let [child-val (k value)]]
+          (cond
+            (and (map? child-schema)
+                 (not (record? child-schema))
+                 (some? child-val)) {k (filter-for-schema child-schema child-val)}
+            (list? child-schema) {k (into '()
+                                          (for [elem child-val
+                                                :let [elem-schema (first child-schema)]
+                                                :when (some? elem)]
+                                            (filter-for-schema elem-schema elem)))}
+            (vector? child-schema) {k (into []
+                                            (for [elem child-val
+                                                  :let [elem-schema (first child-schema)]
+                                                  :when (some? elem)]
+                                              (filter-for-schema elem-schema elem)))}
+            (some? child-val) {k child-val})))
+  )
