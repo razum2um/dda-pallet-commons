@@ -25,7 +25,10 @@
 (defn- test-result-data
   "Creates an internal representation used for test results."
   [resource-key out exit]
-  {:dda-test-result true
+  {:context "server-test"
+   :action-symbol (str "server-test: " resource-key)
+   :summary (str "server-test: " resource-key ", result: " exit)
+   :dda-test-result true
    :resource-key resource-key
    :out out
    :exit exit})

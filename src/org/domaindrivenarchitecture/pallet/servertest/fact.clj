@@ -28,12 +28,36 @@
 (defn- resource-data
   "Generates an internal representation of the resource and applies the 
    transform-fn if provided."
-  [resource-key script out & {:keys [transform-fn]}]
-  {:dda-test-resource true
+  [resource-key script out exit & {:keys [transform-fn]}]
+  {
+   :context "server-test"
+   :action-symbol (str "server-fact: " resource-key)
+   :dda-test-resource true
    :resource-key resource-key
    :transformed-out (if (fn? transform-fn) (transform-fn out) out)
    :out out
-   :script script})
+   :script script
+   :summary (str "server-fact: " resource-key ", result: " exit)
+   :exit exit})
+
+(defn define-session-resource-from-script
+  "Defines a resource as output from an arbitry script. This fails if the
+   script fails (exitcode <> 0).
+   Side effects on target node:
+     * execute script on target node and save result"
+  {:pallet/plan-fn true}
+  [resource-key script & {:keys [transform-fn]}]
+ (actions/as-action
+    (logging/info "got transform-fn" (str transform-fn) (fn? transform-fn)))
+  ; execute the script and save nv for transform output to settings
+  (let [nv (actions/exec-script script)
+        output-nv (actions/with-action-values [nv] 
+                    (resource-data resource-key script (:out nv) (:exit nv) :transform-fn transform-fn))]
+    (crate/assoc-settings :dda-servertest-resources {resource-key output-nv})
+    (actions/as-action
+      (logging/debug "session result: " output-nv))
+    output-nv))
+
 
 (defn define-resource-from-script
   "Defines a resource as output from an arbitry script. This fails if the

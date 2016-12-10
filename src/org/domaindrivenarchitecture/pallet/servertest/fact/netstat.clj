@@ -11,4 +11,4 @@
   "Defines the netstat resource. 
    This is automatically done serverstate crate is used."
   []
-  (define-resource-from-script res-id-netstat "netstat -tulpen"))
+  (define-session-resource-from-script res-id-netstat "netstat -tulpen"))
