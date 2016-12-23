@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.servertest.scripts.core
+(ns org.domaindrivenarchitecture.pallet.servertest.scripts.core-0-2
   (:require
     [pallet.crate :as crate]
     [pallet.actions :as actions]

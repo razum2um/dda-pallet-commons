@@ -1,14 +1,19 @@
 (ns org.domaindrivenarchitecture.pallet.servertest.fact.netstat
   (:require
-    [org.domaindrivenarchitecture.pallet.servertest.fact :refer :all]
-    [org.domaindrivenarchitecture.pallet.servertest.tests :refer :all]
-    [pallet.stevedore :refer :all]
-    [pallet.script :as script]
-    [pallet.script.lib :refer :all]))
+    [org.domaindrivenarchitecture.pallet.servertest.core.fact :refer :all]))
 
-(def res-id-netstat ::netstat)
-(defn define-resources-netstat
+(def fact-id-netstat ::netstat)
+
+(defn parse-netstat
+  [netstat-resource]
+  (map #(zipmap 
+          [:proto :recv-q :send-q :local-adress :foreign-adress :state :user :inode :pid :process-name]
+          (clojure.string/split (clojure.string/trim %) #"\s+|/"))
+     (drop-while #(not (re-matches #"\s*(tcp|udp).*" %)) 
+       (clojure.string/split netstat-resource #"\n"))))
+
+(defn collect-netstat-fact
   "Defines the netstat resource. 
    This is automatically done serverstate crate is used."
   []
-  (define-session-resource-from-script res-id-netstat "netstat -tulpen"))
+  (collect-fact fact-id-netstat '("netstat" "-tulpen") :transform-fn parse-netstat))

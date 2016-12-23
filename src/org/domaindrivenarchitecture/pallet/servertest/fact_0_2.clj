@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.servertest.fact
+(ns org.domaindrivenarchitecture.pallet.servertest.fact-0-2
   (:require
     [pallet.core.session :as session]
     [clojure.tools.logging :as logging]
@@ -50,7 +50,7 @@
  (actions/as-action
     (logging/info "got transform-fn" (str transform-fn) (fn? transform-fn)))
   ; execute the script and save nv for transform output to settings
-  (let [nv (actions/exec-script script)
+  (let [nv (actions/exec-script ~script)
         output-nv (actions/with-action-values [nv] 
                     (resource-data resource-key script (:out nv) (:exit nv) :transform-fn transform-fn))]
     (crate/assoc-settings :dda-servertest-resources {resource-key output-nv})

@@ -16,14 +16,12 @@
 
 (ns org.domaindrivenarchitecture.pallet.servertest.fact.packages
   (:require
-    [org.domaindrivenarchitecture.pallet.servertest.fact :refer :all]
-    [org.domaindrivenarchitecture.pallet.servertest.tests :refer :all]
-    [pallet.stevedore :refer :all]
-    [pallet.script :as script]
-    [pallet.script.lib :refer :all]))
+    [org.domaindrivenarchitecture.pallet.servertest.core.fact :refer :all]))
 
-(def res-id-packages ::packages)
-(defn define-resources-packages
-  "Defines the packages installed."
+(def fact-id-packages ::packages)
+
+(defn collect-packages-fact
+  "Defines the netstat resource. 
+   This is automatically done serverstate crate is used."
   []
-  (define-session-resource-from-script res-id-packages "dpkg -l"))
+  (collect-fact fact-id-netstat '("dpkg" "-l")))
