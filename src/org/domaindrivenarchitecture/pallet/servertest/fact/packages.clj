@@ -24,4 +24,4 @@
   "Defines the netstat resource. 
    This is automatically done serverstate crate is used."
   []
-  (collect-fact fact-id-netstat '("dpkg" "-l")))
+  (collect-fact fact-id-packages '("dpkg" "-l")))
