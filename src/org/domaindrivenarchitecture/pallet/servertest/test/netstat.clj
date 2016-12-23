@@ -16,15 +16,8 @@
 
 (ns org.domaindrivenarchitecture.pallet.servertest.test.netstat
   (:require
-    [org.domaindrivenarchitecture.pallet.servertest.tests :as tests]
-    [org.domaindrivenarchitecture.pallet.servertest.fact.netstat :as netstat-res]
-    [org.domaindrivenarchitecture.pallet.servertest.scripts.core :refer :all]))
-
-(defn parse-netstat
-  [netstat-resource]
-  (map #(zipmap [:proto :recv-q :send-q :local-adress :foreign-adress :state :user :inode :pid :process-name]
-              (clojure.string/split % #"\s+|/"))
-     (rest netstat-resource)))
+    [schema.core :as s]
+    [org.domaindrivenarchitecture.pallet.servertest.fact.netstat :as fact]))
 
 (defn filter-listening-prog
   "filter for program ist listening."
@@ -36,14 +29,21 @@
          (:local-address named-netastat-line))
        ))
 
-(defn prog-listen?
-  [prog port netstat-resource]
-  (some? (filter 
-           #(filter-listening-prog prog port %)
-           (parse-netstat netstat-resource))))
+(s/defn prog-listen? :- {:test-passed s/Bool
+                         :test-message s/Str}
+  [prog :- s/Str 
+   port :- s/Num
+   netstat-resource :- s/Any]
+  {:test-passed
+   (some? (filter 
+            #(filter-listening-prog prog port %)
+            netstat-resource))
+   :test-message ""}
+   )
 
 (defn test-process-listen?
   [prog port]
-  (tests/testclj-resource 
-      netstat-res/res-id-netstat
-      (partial prog-listen? prog port)))
+  ;(tests/server-test
+   ;   fact/fact-id-netstat
+   ;   (partial prog-listen? prog port))
+  )
