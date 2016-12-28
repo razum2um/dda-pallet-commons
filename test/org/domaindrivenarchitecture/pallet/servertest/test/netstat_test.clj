@@ -23,12 +23,6 @@
     [org.domaindrivenarchitecture.pallet.servertest.test.netstat :as sut]
     ))
 
-(def netstat-resource
-  ["Proto Recv-Q Send-Q Local Address           Foreign Address         State       User       Inode       PID/Program name"
-   "tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      0          9807        1001/sshd"       
-   "tcp6       0      0 :::80                   :::*                    LISTEN      0          44161       4135/apache2"    
-   "tcp6       0      0 :::4369                 :::*                    LISTEN      108        33687       27416/epmd "])
-
 (def named-netastat-line
   {:foreign-address ":::*",
    :local-address ":::80",
@@ -40,14 +34,6 @@
    :pid "4135",
    :send-q "0",
    :user "0"})
-
-(deftest test-parse
-  (testing 
-    "test parsing netstat-output" 
-      (is (= "sshd"
-             (:process-name 
-               (first (sut/parse-netstat netstat-resource)))))
-      ))
 
 (deftest test-filter-for-listening-prog
   (testing 
@@ -70,5 +56,5 @@
 (deftest test-port
   (testing 
     "test the listen port test" 
-      (is (sut/prog-listen? "apache2" 80 netstat-resource ))
+      (is (sut/prog-listen? "apache2" 80 [named-netastat-line]))
       ))

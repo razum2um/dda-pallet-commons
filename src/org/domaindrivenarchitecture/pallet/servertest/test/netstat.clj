@@ -17,7 +17,8 @@
 (ns org.domaindrivenarchitecture.pallet.servertest.test.netstat
   (:require
     [schema.core :as s]
-    [org.domaindrivenarchitecture.pallet.servertest.fact.netstat :as fact]))
+    [org.domaindrivenarchitecture.pallet.servertest.fact.netstat :as netstat-fact]
+    [org.domaindrivenarchitecture.pallet.servertest.core.test :as server-test]))
 
 (defn filter-listening-prog
   "filter for program ist listening."
@@ -29,21 +30,25 @@
          (:local-address named-netastat-line))
        ))
 
-(s/defn prog-listen? :- {:test-passed s/Bool
-                         :test-message s/Str}
+(s/defn prog-listen? :- server-test/TestResult
   [prog :- s/Str 
    port :- s/Num
-   netstat-resource :- s/Any]
-  {:test-passed
-   (some? (filter 
-            #(filter-listening-prog prog port %)
-            netstat-resource))
-   :test-message ""}
-   )
+   input :- s/Any]
+  (let [filter-result (filter 
+                        #(filter-listening-prog prog port %)
+                        input)
+        passed (some? filter-result)
+        summary (if passed "TEST PASSED" "TEST FAILED")]
+    {:input input
+     :test-passed passed
+     :test-message (str "test for : " prog ", " port " summary: " summary)
+     :summary summary}
+   ))
 
-(defn test-process-listen?
-  [prog port]
-  ;(tests/server-test
-   ;   fact/fact-id-netstat
-   ;   (partial prog-listen? prog port))
-  )
+
+(s/defn test-prog-listen :- server-test/TestActionResult 
+  [prog :- s/Str 
+   port :- s/Num]
+  (server-test/test-it 
+    netstat-fact/fact-id-netstat
+    #(prog-listen? prog port %)))

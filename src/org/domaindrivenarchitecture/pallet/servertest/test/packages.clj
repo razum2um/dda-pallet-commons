@@ -16,16 +16,8 @@
 (ns org.domaindrivenarchitecture.pallet.servertest.test.packages
   (:require
     [schema.core :as s]
-    [org.domaindrivenarchitecture.pallet.servertest.tests :as tests]
-    [org.domaindrivenarchitecture.pallet.servertest.fact.packages :as packages-res]
-    [org.domaindrivenarchitecture.pallet.servertest.scripts.core :refer :all]))
-
-(defn parse-packages
-  [packages-resource]
-  (map #(zipmap [:state :package :version :arch :desc]
-              (clojure.string/split % #"\s+|/"))
-     (rest (rest (rest (rest (rest packages-resource))))))
-  )
+    [org.domaindrivenarchitecture.pallet.servertest.core.test :as server-test]
+    [org.domaindrivenarchitecture.pallet.servertest.fact.packages :as packages-fact]))
 
 (defn filter-installed-package
   "filter for installed packages."
@@ -33,17 +25,23 @@
   (= (:package parsed-package-line) package)
   )
 
-(s/defn installed? :- s/Bool
+(s/defn installed? :- server-test/TestResult
   [package :- s/Str 
-   packages-resource]
-  (some? (filter 
-           #(filter-installed-package package %)
-           (parse-packages packages-resource)))
-  )
+   input :- s/Any]
+  (let [filter-result (filter 
+                        #(filter-installed-package package %)
+                        input) 
+        passed (some? filter-result)
+        summary (if passed "TEST PASSED" "TEST FAILED")]
+    {:input input
+     :test-passed passed
+     :test-message (str "test for : " package " summary: " summary)
+     :summary summary}
+    ))
 
-(s/defn test-installed? :- s/Bool
+(s/defn test-installed? :- server-test/TestActionResult 
   [package :- s/Str]
-  (tests/testclj-resource 
-    packages-res/res-id-packages
-    (partial installed? package))
+  (server-test/test-it 
+    packages-fact/fact-id-packages
+    #(installed? package %))
   )

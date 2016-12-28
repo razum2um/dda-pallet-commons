@@ -21,4 +21,49 @@
     [pallet.crate :as crate]
     [pallet.actions :as actions]))
 
+(def TestResult
+  {:input s/Any
+   :test-passed s/Bool
+   :test-message s/Str
+   :summary s/Str})
 
+(def TestActionResult
+  {:context s/Str
+   :action-symbol s/Any
+   :input s/Any
+   :out s/Str
+   :exit s/Num 
+   :summary s/Str})
+
+(s/defn test-action-result :- TestActionResult
+  [context :- s/Str
+   fact-key :- s/Keyword
+   fact-key-name :- s/Str
+   test-result :- TestResult]
+  (let [action-symbol (str "test-" fact-key-name)]
+    {:context context
+     :action-symbol action-symbol
+     :input (-> test-result :input)
+     :out (-> test-result :test-message)
+     :exit 0
+     :summary (-> test-result :summary)}
+    ))
+
+(s/defn test-it :- TestActionResult
+  [fact-key :- s/Keyword
+   test-fn]
+  (let [all-facts (crate/get-settings :dda-servertest-fact {:instance-id (crate/target-node)})
+        facts (-> all-facts fact-key)
+        fact-key-name (name fact-key)]  
+    (actions/as-action
+      (logging/info (str "testing " fact-key-name))
+      (let [input (:out @facts)
+            context (:context @facts)
+            test-result (apply test-fn (list input))
+            action-result (test-action-result context fact-key fact-key-name test-result)]
+        (logging/debug (str "input: " input))
+        (logging/debug (str "result: " test-result))
+        (logging/info (str "result for " fact-key-name " : " (-> action-result :summary)))
+        action-result
+      ))
+    ))

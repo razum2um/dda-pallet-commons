@@ -21,8 +21,25 @@
     [pallet.crate :as crate]
     [pallet.actions :as actions]))
 
-(defn fact-results
-  [script-result transform-fn]
+(def ScriptResult
+  {:context s/Str
+   :out s/Any
+   :action-symbol s/Any
+   :exit s/Num
+   :script s/Any})
+
+(def FactResult
+  {:context s/Str
+   :action-symbol s/Any
+   :script s/Any
+   :out s/Any
+   :out-raw  s/Str
+   :exit s/Num
+   :summary s/Str})
+
+(s/defn fact-result :- FactResult
+  [script-result :- ScriptResult
+   transform-fn]
   (let [out-raw (:out script-result)
         context (:context script-result)
         action-symbol (:action-symbol script-result)
@@ -58,14 +75,14 @@
    & {:keys [transform-fn]
       :or {transform-fn nil}}]
   (let [script-result (actions/exec-script ~script)
-        fact-result (actions/as-action
-                      (logging/info "transforming fact script result")
-                      (logging/debug "script result: " script-result)
-                      (let 
-                        [fact-result (fact-results @script-result transform-fn)]
-                        (logging/debug "fact result: " fact-result)
-                        fact-result
-                        ))]
+        fact-action-result (actions/as-action
+                             (logging/info "transforming fact script result")
+                             (logging/debug "script result: " script-result)
+                             (let 
+                               [fact-result (fact-result @script-result transform-fn)]
+                               (logging/debug "fact result: " fact-result)
+                               fact-result
+                               ))]
     (crate/assoc-settings 
-			   :dda-servertest-fact {fact-key fact-result} {:instance-id (crate/target-node)})
+			   :dda-servertest-fact {fact-key fact-action-result} {:instance-id (crate/target-node)})
   ))

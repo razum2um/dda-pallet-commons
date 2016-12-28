@@ -20,8 +20,15 @@
 
 (def fact-id-packages ::packages)
 
+(defn parse-packages
+  [packages-resource]
+  (map #(zipmap [:state :package :version :arch :desc]
+              (clojure.string/split % #"\s+|/"))
+     (rest (rest (rest (rest (rest packages-resource))))))
+  )
+
 (defn collect-packages-fact
   "Defines the netstat resource. 
    This is automatically done serverstate crate is used."
   []
-  (collect-fact fact-id-packages '("dpkg" "-l")))
+  (collect-fact fact-id-packages '("dpkg" "-l") :transform-fn parse-packages))
