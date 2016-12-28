@@ -21,10 +21,11 @@
 (def fact-id-packages ::packages)
 
 (defn parse-packages
-  [packages-resource]
+  [packages-fact]
   (map #(zipmap [:state :package :version :arch :desc]
               (clojure.string/split % #"\s+|/"))
-     (rest (rest (rest (rest (rest packages-resource))))))
+       (drop-while #(re-matches #"\s*(Desired|\||\+).*" %) 
+                   (clojure.string/split packages-fact #"\n")))
   )
 
 (defn collect-packages-fact

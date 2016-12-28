@@ -23,16 +23,16 @@
     [org.domaindrivenarchitecture.pallet.servertest.fact.packages :as sut]
     ))
 
-(def packages-resource
-  ["Desired=Unknown/Install/Remove/Purge/Hold"
-   "| Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend"
-   "|/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)"
-   "||/ Name                                  Version                                  Architecture Description"
-   "+++-=====================================-========================================-============-==============================================================================="
-   "ii  accountsservice                       0.6.40-2ubuntu11.3                       amd64        query and manipulate user account information"
-   "ii  acl                                   2.2.52-3                                 amd64        Access control list utilities"
-   "ii  acpid                                 1:2.0.26-1ubuntu2                        amd64        Advanced Configuration and Power Interface event daemon"
-   "ii  adduser                               3.113+nmu3ubuntu4                        all          add and remove users and groups"])
+(def packages-resource "Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
+|/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)
+||/ Name                                  Version                                  Architecture Description
++++-=====================================-========================================-============-===============================================================================
+ii  accountsservice                       0.6.40-2ubuntu11.3                       amd64        query and manipulate user account information
+ii  acl                                   2.2.52-3                                 amd64        Access control list utilities
+ii  acpid                                 1:2.0.26-1ubuntu2                        amd64        Advanced Configuration and Power Interface event daemon
+ii  adduser                               3.113+nmu3ubuntu4                        all          add and remove users and groups
+")
 
 
 (deftest test-parse
