@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/dda-pallet-commons "0.3.0-SNAPSHOT"
+(defproject org.domaindrivenarchitecture/dda-pallet-commons "0.3.0"
   :description "common utils for dda pallet"
   :url "https://www.domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
