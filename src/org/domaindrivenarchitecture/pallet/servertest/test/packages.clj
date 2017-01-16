@@ -31,7 +31,7 @@
   (let [filter-result (filter 
                         #(filter-installed-package package %)
                         input) 
-        passed (some? filter-result)
+        passed (not (empty? filter-result))
         summary (if passed "TEST PASSED" "TEST FAILED")]
     {:input input
      :test-passed passed

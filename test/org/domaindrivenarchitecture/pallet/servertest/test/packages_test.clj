@@ -40,5 +40,7 @@
 (deftest test-installed
   (testing 
     "test for installed packages" 
-      (is (sut/installed? "adduser" [named-packages-line]))
+      (is (= "TEST FAILED" (:summary (sut/installed? "query" [named-packages-line]))))
+      (is (= "TEST FAILED" (:summary (sut/installed? "account" [named-packages-line]))))
+      (is (= "TEST PASSED" (:summary (sut/installed? "accountsservice" [named-packages-line]))))
       ))
