@@ -18,13 +18,13 @@
 
 (ns org.domaindrivenarchitecture.pallet.commons.encrypted-credentials
   (:require
-    [clojure.java.io :as io]
-    [schema.core :as s]
-    [clj-pgp.core :as pgp]
-    [clj-pgp.keyring :as keyring]
-    [clj-pgp.message :as pgp-msg]
-    [org.domaindrivenarchitecture.config.commons.directory-model :as dir]
- ))
+   [clojure.java.io :as io]
+   [schema.core :as s]
+   [clj-pgp.core :as pgp]
+   [clj-pgp.keyring :as keyring]
+   [clj-pgp.message :as pgp-msg]
+   [dda.config.commons.directory-model :as dir]
+   ))
 
 (s/defn encrypted? :- s/Bool
   [message :- s/Str]
