@@ -14,22 +14,23 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.servertest.fact.packages
+
+(ns dda.pallet.commons.stevedore-test
   (:require
-    [org.domaindrivenarchitecture.pallet.servertest.core.fact :refer :all]))
+    [clojure.test :refer :all]
+    [clojure.java.io :as io]))
 
-(def fact-id-packages ::packages)
+(defn source-comment-re-str []
+  (str "(?sm) *# " (.getName (io/file *file*)) ":\\d+\n?"))
 
-(defn parse-packages
-  [packages-fact]
-  (map #(zipmap [:state :package :version :arch :desc]
-              (clojure.string/split % #"\s+|/"))
-       (drop-while #(re-matches #"\s*(Desired|\||\+).*" %) 
-                   (clojure.string/split packages-fact #"\n")))
-  )
-
-(defn collect-packages-fact
-  "Defines the netstat resource. 
-   This is automatically done serverstate crate is used."
-  []
-  (collect-fact fact-id-packages '("dpkg" "-l") :transform-fn parse-packages))
+;;; a test method that adds a check for source line comment
+(defmethod assert-expr 'script= [msg form]
+  (let [[_ expected expr] form]
+    `(let [re# (re-pattern ~(source-comment-re-str))
+           expected# (-> ~expected string/trim)
+           actual# (-> ~expr (string/replace re# "") string/trim)]
+       (if (= expected# actual#)
+         (do-report
+          {:type :pass :message ~msg :expected expected# :actual actual#})
+         (do-report
+          {:type :fail :message ~msg :expected expected# :actual actual#})))))

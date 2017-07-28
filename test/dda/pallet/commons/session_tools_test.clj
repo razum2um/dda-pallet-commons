@@ -15,11 +15,11 @@
 ; limitations under the License.
 
 
-(ns org.domaindrivenarchitecture.pallet.commons.session-tools-test
+(ns dda.pallet.commons.session-tools-test
   (:require
     [clojure.test :refer :all]
     [schema.core :as s]
-    [org.domaindrivenarchitecture.pallet.commons.session-tools :as sut]))
+    [dda.pallet.commons.session-tools :as sut]))
 
 
 

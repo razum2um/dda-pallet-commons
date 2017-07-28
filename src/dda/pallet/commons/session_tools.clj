@@ -1,4 +1,4 @@
-(ns org.domaindrivenarchitecture.pallet.commons.session-tools
+(ns dda.pallet.commons.session-tools
   (:require 
     [schema.core :as s]
     [clojure.xml :as xml]
@@ -7,7 +7,7 @@
     [clojure.inspector :as inspector]
     [pallet.core.data-api :as da]
     [pallet.node-value :as nv]
-    [org.domaindrivenarchitecture.pallet.commons.pallet-schema :as ps]))
+    [dda.pallet.commons.pallet-schema :as ps]))
 
 (import java.io.StringWriter)
 

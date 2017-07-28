@@ -15,7 +15,7 @@
 ; limitations under the License.
 
 
-(ns org.domaindrivenarchitecture.pallet.commons.plan-test-utils
+(ns dda.pallet.commons.plan-test-utils
   (:require
     [schema.core :as s]))
 

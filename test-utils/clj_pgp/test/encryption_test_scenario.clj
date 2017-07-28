@@ -25,7 +25,7 @@
     [clj-pgp.keyring :as keyring]
     [clj-pgp.tags :as tags]    
     [clj-pgp.message :as pgp-msg]
-    [org.domaindrivenarchitecture.pallet.commons.encrypted-credentials :as encrypted-credentials]))
+    [dda.pallet.commons.encrypted-credentials :as encrypted-credentials]))
 
 
 (def pubring

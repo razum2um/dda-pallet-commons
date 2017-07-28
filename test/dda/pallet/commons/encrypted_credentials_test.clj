@@ -13,7 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
-(ns org.domaindrivenarchitecture.pallet.commons.encrypted-credentials-test
+(ns dda.pallet.commons.encrypted-credentials-test
   (:require
     [clojure.java.io :as io]
     [clojure.test :refer :all]
@@ -23,7 +23,7 @@
     [clj-pgp.core :as core]
     [clj-pgp.generate :as pgp-gen]
     [clj-pgp.test.encryption-test-scenario :as test-scenario]
-    [org.domaindrivenarchitecture.pallet.commons.encrypted-credentials :as sut]))
+    [dda.pallet.commons.encrypted-credentials :as sut]))
 
 
 (def encryptable-credential 

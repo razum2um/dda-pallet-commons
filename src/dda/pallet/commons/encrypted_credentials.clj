@@ -16,15 +16,15 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.commons.encrypted-credentials
+(ns dda.pallet.commons.encrypted-credentials
   (:require
    [clojure.java.io :as io]
    [schema.core :as s]
    [clj-pgp.core :as pgp]
    [clj-pgp.keyring :as keyring]
    [clj-pgp.message :as pgp-msg]
-   [dda.config.commons.directory-model :as dir]
-   ))
+   [dda.config.commons.directory-model :as dir]))
+
 
 (s/defn encrypted? :- s/Bool
   [message :- s/Str]
@@ -36,19 +36,19 @@
   [message :- s/Str]
   (not (encrypted? message)))
 
-(def EncryptableCredential 
+(def EncryptableCredential
   {:account s/Str
    :secret s/Str})
 
-(def UnencryptedCredential 
+(def UnencryptedCredential
   {:account s/Str
    :secret (s/pred unencrypted?)})
 
-(def EncryptedCredential 
+(def EncryptedCredential
   {:account s/Str
    :secret (s/pred encrypted?)})
 
-(def EncryptionConfiguration 
+(def EncryptionConfiguration
   {:user-home dir/NonRootDirectory
    (s/optional-key :pallet-home) dir/NonRootDirectory
    (s/optional-key :secring-path) s/Str
@@ -57,26 +57,26 @@
 (defn default-encryption-configuration []
   (let [user-home (get (System/getenv) "HOME" "~")
         pallet-home (get (System/getenv) "PALLET_HOME")]
-  (merge
-    {:user-home (str user-home "/")}
-    (if (some? pallet-home) 
-      {:pallet-home (str pallet-home "/")}
-      {}))
-  ))
+   (merge
+     {:user-home (str user-home "/")}
+     (if (some? pallet-home)
+       {:pallet-home (str pallet-home "/")}
+       {}))))
+
 
 (s/defn secring-path :- s/Str
   [encryption-config :- EncryptionConfiguration]
-  (cond 
+  (cond
     (contains? encryption-config :secring-path) (get-in encryption-config [:secring-path])
     (contains? encryption-config :pallet-home) (str (get-in encryption-config [:pallet-home]) "secring.gpg")
-    :else (str (get-in encryption-config [:user-home]) ".gnupg/secring.gpg")
-    ))
+    :else (str (get-in encryption-config [:user-home]) ".gnupg/secring.gpg")))
+
 
 (s/defn load-secret-keyring
   "Load the secret keyring from configured position."
   [encryption-config :- EncryptionConfiguration]
   (let [secring-path (secring-path encryption-config)]
-    (keyring/load-secret-keyring 
+    (keyring/load-secret-keyring
       (if (.exists (io/file secring-path))
         (io/file secring-path)
         (io/file (io/resource secring-path))))))
@@ -106,22 +106,22 @@
   "encrypt the secret part of encryptable."
   [encryptors :- s/Str
    encryptable :- UnencryptedCredential]
-  (assoc encryptable :secret 
+  (assoc encryptable :secret
          (encrypt-secret encryptors (get-in encryptable [:secret]))))
 
-(s/defn decrypt-secret 
-  "decrypts the secret. decryptor can be passphrase or private key. 
+(s/defn decrypt-secret
+  "decrypts the secret. decryptor can be passphrase or private key.
   alternatively you can provide a seckey as decryptor and the corresponding keyphrase for unlocking."
   [decryptor :- s/Str
    secret :- s/Str & keyphrase]
-  (if (nil? keyphrase) 
-  (pgp-msg/decrypt secret decryptor)
-  (pgp-msg/decrypt secret (apply pgp/unlock-key decryptor keyphrase))
-  ))
+  (if (nil? keyphrase)
+   (pgp-msg/decrypt secret decryptor)
+   (pgp-msg/decrypt secret (apply pgp/unlock-key decryptor keyphrase))))
+
 
 (s/defn decrypt :- UnencryptedCredential
   "decrypt the secret part of encryptable. for decryptor options see decrypt-secret."
   [decryptor :- s/Str
-   decryptable :- EncryptedCredential & keyphrase ]
-  (assoc decryptable :secret 
+   decryptable :- EncryptedCredential & keyphrase]
+  (assoc decryptable :secret
          (apply decrypt-secret decryptor (get-in decryptable [:secret]) keyphrase)))

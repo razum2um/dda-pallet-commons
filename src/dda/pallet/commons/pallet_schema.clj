@@ -1,4 +1,4 @@
-(ns org.domaindrivenarchitecture.pallet.commons.pallet-schema
+(ns dda.pallet.commons.pallet-schema
   (:require 
     [schema.core :as s]))
 
