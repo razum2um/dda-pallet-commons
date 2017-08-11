@@ -8,7 +8,7 @@
                  [metosin/schema-tools "0.9.0"]
                  [mvxcvi/clj-pgp "0.8.3"]
                  [com.palletops/pallet "0.8.12"]
-                 [dda/dda-config-commons "0.2.1-SNAPSHOT"]
+                 [dda/dda-config-commons "0.2.2"]
                  [ch.qos.logback/logback-classic "1.2.3"]]
   :source-paths ["src" "test-utils"]
   :repositories [["snapshots" :clojars]
