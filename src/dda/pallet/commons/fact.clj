@@ -55,9 +55,10 @@
 
 (s/defn fact-result :- FactResult
   [script-result :- ScriptResult
+   context :- s/Str
    transform-fn]
   (let [out-raw (:out script-result)
-        context (:context script-result)
+        context context
         action-symbol (:action-symbol script-result)
         exit (:exit script-result)
         script (:script script-result)]
@@ -98,7 +99,10 @@
                              (logging/info "transforming fact script result")
                              (logging/debug "script result: " script-result)
                              (let
-                               [fact-result (fact-result @script-result transform-fn)]
+                               [fact-result (fact-result
+                                              @script-result
+                                              (str "fact: " (name facility) "/" (name fact-key))
+                                              transform-fn)]
                                (logging/debug "fact result: " fact-result)
                                fact-result))]
     (crate/assoc-settings
