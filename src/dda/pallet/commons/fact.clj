@@ -53,6 +53,19 @@
    :exit s/Num
    :summary s/Str})
 
+(def ExitCodeFactResult
+ {:context s/Str
+  :action-symbol s/Any
+  :script s/Any
+  :out s/Bool
+  :out-raw  s/Str
+  :exit s/Num
+  :summary s/Str})
+
+(s/defn parse-exit-code :- s/Bool
+  [input :- s/Str]
+  (= "0" input))
+
 (s/defn fact-result :- FactResult
   [script-result :- ScriptResult
    context :- s/Str
@@ -107,3 +120,25 @@
                                fact-result))]
     (crate/assoc-settings
          facility {fact-key fact-action-result} {:instance-id (crate/target-node)})))
+
+(s/defn collect-exit-code-fact
+ "Gets a fact from target node based on output of a exit code echo script.
+  Exitcode <> 0 means fact is collected successfull.
+  By convention the given script may not have side effects on target system.
+
+  `fact-key`
+  should be a keyword like :netstat
+
+  `script`
+  should be a sequence like '(\"test -e ./secret; echo $?\")
+
+  The output of echo is transformed to a boolean:
+    0 -> true
+    everything else -> false
+
+  Result is stored in session as ExitCodeFactResult. Boolean autput is stored in :out
+"
+ [facility :- s/Keyword
+  fact-key :- s/Keyword
+  script]
+ (collect-fact facility fact-key script :transform-fn parse-exit-code))

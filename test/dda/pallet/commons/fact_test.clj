@@ -14,12 +14,20 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.package
+(ns dda.pallet.commons.fact-test
   (:require
-      [pallet.actions :as actions]))
+    [clojure.test :refer :all]
+    [schema.core :as s]
+    [dda.pallet.commons.fact :as sut]))
 
-(defn update-and-upgrade
-  "update and upgrade"
-  []
-  (actions/exec-script "apt-get update -y")
-  (actions/exec-script "apt-get upgrade -y"))
+(def no-error
+  "0")
+
+(def error
+  "3")
+
+(deftest test-parse
+  (testing
+    "test parsing ls output"
+      (is (sut/parse-exit-code no-error))
+      (is (not (sut/parse-exit-code error)))))
