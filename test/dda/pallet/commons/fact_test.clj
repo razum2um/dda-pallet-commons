@@ -20,8 +20,11 @@
     [schema.core :as s]
     [dda.pallet.commons.fact :as sut]))
 
-(def no-error
+(def no-error-1
   "0")
+
+(def no-error-2
+  "0\n")
 
 (def error
   "3")
@@ -29,5 +32,6 @@
 (deftest test-parse
   (testing
     "test parsing ls output"
-      (is (sut/parse-exit-code no-error))
+      (is (sut/parse-exit-code no-error-1))
+      (is (sut/parse-exit-code no-error-2))
       (is (not (sut/parse-exit-code error)))))

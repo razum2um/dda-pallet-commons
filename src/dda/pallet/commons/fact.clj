@@ -64,7 +64,9 @@
 
 (s/defn parse-exit-code :- s/Bool
   [input :- s/Str]
-  (= "0" input))
+  (or
+    (= "0" input)
+    (= "0\n" input)))
 
 (s/defn fact-result :- FactResult
   [script-result :- ScriptResult
