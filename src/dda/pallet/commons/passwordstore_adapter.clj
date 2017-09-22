@@ -17,6 +17,7 @@
 (ns dda.pallet.commons.passwordstore-adapter
   (:require
    [schema.core :as s]
+   [clojure.string :as string]
    [clojure.java.shell :as sh]))
 
 (s/defn get-secret :- s/Str
@@ -25,3 +26,7 @@
     (if (= 0 (:exit result))
         (:out result)
         (throw (RuntimeException. (:err result))))))
+
+(s/defn get-secret-wo-newline :- s/Str
+  [path :- s/Str]
+  (string/trim-newline (get-secret path)))
