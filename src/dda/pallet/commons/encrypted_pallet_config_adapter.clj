@@ -14,12 +14,26 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.package
+(ns dda.pallet.commons.encrypted-pallet-config-adapter
   (:require
-      [pallet.actions :as actions]))
+   [schema.core :as s]
+   [pallet.api :as api]
+   [dda.pallet.commons.encrypted-credentials :as crypto]))
 
-(defn update-and-upgrade
-  "update and upgrade"
-  []
-  (actions/exec-script "apt-get update -y")
-  (actions/exec-script "apt-get upgrade -y"))
+(s/defn get-pallet-credentials :- crypto/UnencryptedCredential
+  ([path :- [s/Keyword]]
+   (let [pallet-config (pallet.configure/pallet-config)]
+     (get-in pallet-config path)))
+  ([path :- [s/Keyword]
+    key-id :- s/Str
+    key-passphrase :- s/Str]
+   (let [pallet-config (pallet.configure/pallet-config)
+         desired-config (get-in pallet-config path)]
+     (if (crypto/encrypted? desired-config)
+       (crypto/decrypt
+         (crypto/get-secret-key
+           {:user-home (str (System/getenv "HOME") "/")
+            :key-id key-id})
+         desired-config
+         key-passphrase)
+       desired-config))))

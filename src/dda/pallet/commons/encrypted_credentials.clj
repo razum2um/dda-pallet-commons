@@ -1,5 +1,3 @@
-
-
 ; Licensed to the Apache Software Foundation (ASF) under one
 ; or more contributor license agreements. See the NOTICE file
 ; distributed with this work for additional information
@@ -24,7 +22,6 @@
    [clj-pgp.keyring :as keyring]
    [clj-pgp.message :as pgp-msg]
    [dda.config.commons.directory-model :as dir]))
-
 
 (s/defn encrypted? :- s/Bool
   [message :- s/Str]
@@ -63,14 +60,12 @@
        {:pallet-home (str pallet-home "/")}
        {}))))
 
-
 (s/defn secring-path :- s/Str
   [encryption-config :- EncryptionConfiguration]
   (cond
     (contains? encryption-config :secring-path) (get-in encryption-config [:secring-path])
     (contains? encryption-config :pallet-home) (str (get-in encryption-config [:pallet-home]) "secring.gpg")
     :else (str (get-in encryption-config [:user-home]) ".gnupg/secring.gpg")))
-
 
 (s/defn load-secret-keyring
   "Load the secret keyring from configured position."
@@ -95,7 +90,6 @@
     (load-secret-keyring encryption-config)
     (get-in encryption-config [:key-id])))
 
-
 (s/defn encrypt-secret
   "encrypt the secret. encryptor can be passphrase or public key."
   [encryptors :- [s/Str]
@@ -117,7 +111,6 @@
   (if (nil? keyphrase)
    (pgp-msg/decrypt secret decryptor)
    (pgp-msg/decrypt secret (apply pgp/unlock-key decryptor keyphrase))))
-
 
 (s/defn decrypt :- UnencryptedCredential
   "decrypt the secret part of encryptable. for decryptor options see decrypt-secret."
