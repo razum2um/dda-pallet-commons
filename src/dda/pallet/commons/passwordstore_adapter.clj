@@ -14,12 +14,19 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.package
+(ns dda.pallet.commons.passwordstore-adapter
   (:require
-      [pallet.actions :as actions]))
+   [schema.core :as s]
+   [clojure.string :as string]
+   [clojure.java.shell :as sh]))
 
-(defn update-and-upgrade
-  "update and upgrade"
-  []
-  (actions/exec-script "apt-get update -y")
-  (actions/exec-script "apt-get upgrade -y"))
+(s/defn get-secret :- s/Str
+  [path :- s/Str]
+  (let [result (sh/sh "pass" path)]
+    (if (= 0 (:exit result))
+        (:out result)
+        (throw (RuntimeException. (:err result))))))
+
+(s/defn get-secret-wo-newline :- s/Str
+  [path :- s/Str]
+  (string/trim-newline (get-secret path)))
