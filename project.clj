@@ -6,7 +6,6 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/tools.cli "0.3.5"]
                  [prismatic/schema "1.1.7"]
-                 [metosin/schema-tools "0.9.0"]
                  [mvxcvi/clj-pgp "0.8.3"]
                  [com.palletops/pallet "0.8.12"]
                  [dda/dda-config-commons "0.2.3"]
