@@ -61,5 +61,4 @@
       "install" (apply install-fn)
       "configure" (apply configure-fn)
       "test" (apply test-fn)
-      (exit 1 (usage summary)))
-    ))
+      (exit 1 (usage summary)))))
