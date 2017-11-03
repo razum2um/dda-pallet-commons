@@ -25,7 +25,17 @@
   :node-ip s/Str})
 
 (def ExistingNodes
-  {:s/Keyword ExistingNode})
+  {:s/Keyword [ExistingNode]})
+
+(s/defn ^:always-validate single-remote-node
+  [group :- s/Keyword
+   existing-node :- ExistingNode]
+  (let [{:keys [node-name node-ip]} existing-node]
+    (node-list/make-node
+      node-name
+      (name group)
+      node-ip
+      :ubuntu)))
 
 (def ProvisioningUser {:login s/Str
                        (s/optional-key :password) s/Str})
@@ -41,13 +51,8 @@
      node-ip
      :ubuntu))
   ([group :- s/Keyword
-    existing-node :- ExistingNode]
-   (let [{:keys [node-name node-ip]} existing-node]
-    (node-list/make-node
-      node-name
-      (name group)
-      node-ip
-      :ubuntu))))
+    existing-nodes :- [ExistingNode]]
+   (map #(single-remote-node group %) existing-nodes)))
 
 (s/defn provider
   ([provisioning-ip :- s/Str
@@ -62,7 +67,7 @@
       :node-list
       (into
         []
-        (map (fn [[k v]] (remote-node k v)) existing-nodes)))))
+        (flatten (map (fn [[k v]] (remote-node k v)) existing-nodes))))))
 
 (defn node-spec [provisioning-user]
   {:image
