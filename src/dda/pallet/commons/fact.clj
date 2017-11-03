@@ -111,7 +111,7 @@
          :or {transform-fn nil}} options
         script-result (actions/exec-script ~script)
         fact-action-result (actions/as-action
-                             (logging/info "transforming fact script result")
+                             (logging/debug "transforming fact script result")
                              (logging/debug "script result: " script-result)
                              (let
                                [fact-result (fact-result

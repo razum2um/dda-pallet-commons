@@ -37,6 +37,12 @@
       node-ip
       :ubuntu)))
 
+(def ProvisioningUser {:login s/Str
+                       (s/optional-key :password) s/Str})
+
+(def Targets {:existing [ExistingNode]
+              :provisioning-user ProvisioningUser})
+
 (s/defn ^:always-validate remote-node
   ([node-ip node-name group-name]
    (node-list/make-node
