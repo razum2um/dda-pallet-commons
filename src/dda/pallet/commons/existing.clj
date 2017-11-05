@@ -18,7 +18,8 @@
   (:require
    [schema.core :as s]
    [pallet.compute.node-list :as node-list]
-   [pallet.compute :as compute]))
+   [pallet.compute :as compute]
+   [dda.pallet.commons.external-config :as ext-config]))
 
 (def ExistingNode
  {:node-name s/Str
@@ -72,3 +73,7 @@
 (defn node-spec [provisioning-user]
   {:image
    {:login-user provisioning-user}})
+
+(s/defn ^:always-validate load-targets :- Targets
+  [file-name :- s/Str]
+  (ext-config/parse-config file-name))
