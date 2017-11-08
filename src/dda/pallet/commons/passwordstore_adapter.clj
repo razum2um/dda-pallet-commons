@@ -25,7 +25,7 @@
   (let [result (sh/sh "pass" path)]
     (if (= 0 (:exit result))
         (:out result)
-        (throw (RuntimeException. (:err result))))))
+        (throw (RuntimeException. (str "error in path " path "\n" (:err result)))))))
 
 (s/defn get-secret-wo-newline :- s/Str
   [path :- s/Str]
