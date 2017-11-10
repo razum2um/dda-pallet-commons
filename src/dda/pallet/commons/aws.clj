@@ -19,8 +19,8 @@
     [schema.core :as s]
     [pallet.api :as api]
     [pallet.compute :as compute]
-    [dda.pallet.commons.external-config :as ext-config]))
-    [dda.pallet.commons.secret :as secret]
+    [dda.pallet.commons.external-config :as ext-config]
+    [dda.pallet.commons.secret :as secret]))
 
 ; TODO: refactor - move to config commons
 (def AwsContext
