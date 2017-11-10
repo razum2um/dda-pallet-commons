@@ -36,32 +36,37 @@
 (s/defn dispatch-by-secret-type :- s/Keyword
   "Dispatcher for secret resolving. Also does a
    schema validation of arguments."
-  [secret :- Secret]
+  [secret :- Secret
+   & _]
   (first (keys secret)))
 
 ;TODO: move to config.commons
 (defmulti resolve-secret
   "resolves the secret"
   dispatch-by-secret-type)
-(s/defmethod resolve-secret :default
+(s/defmethod ^:always-validate resolve-secret :default
   [secret :- Secret]
-  (throw (UnsupportedOperationException. "Not impleneted yet.")))
+  (throw (UnsupportedOperationException. (str "Not impleneted yet: resolve-secret for " secret))))
 
 ;TODO: move to config.commons
-(s/defmethod resolve-secret :plain
-  [secret :- Secret]
+(s/defmethod ^:always-validate resolve-secret :plain
+  [secret :- Secret
+   & _]
   (:plain secret))
-(s/defmethod resolve-secret :password-store-single
-  [secret :- Secret]
+(s/defmethod ^:always-validate resolve-secret :password-store-single
+  [secret :- Secret
+   & _]
   (adapter/get-secret-wo-newline (:password-store-single secret)))
-(s/defmethod resolve-secret :password-store-multi
-  [secret :- Secret]
+(s/defmethod ^:always-validate resolve-secret :password-store-multi
+  [secret :- Secret
+   & _]
   (adapter/get-secret (:password-store-multi secret)))
 
-(s/defmethod resolve-secret :pallet-secret
+(s/defmethod ^:always-validate resolve-secret :pallet-secret
   [secret :- PalletSecret
-   passphrase :- s/Str]
-  (let [{:keys [service-path record-element key-id]
+   & options]
+  (let [{:keys [passphrase]} options
+        {:keys [service-path record-element key-id]
          :or {service-path [:services :aws]}} secret
          aws-encrypted-credentials (get-in (pc/pallet-config) service-path)
          aws-decrypted-credentials (crypto/decrypt

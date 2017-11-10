@@ -21,7 +21,8 @@
     [dda.pallet.commons.secret :as sut]))
 
 (defmethod sut/resolve-secret :test-resolver
-  [secret]
+  [secret
+   & _]
   "success")
 
 (def secret
