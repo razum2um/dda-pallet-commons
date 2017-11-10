@@ -19,7 +19,8 @@
     [schema.core :as s]
     [pallet.api :as api]
     [pallet.compute :as compute]
-    [dda.pallet.commons.secret :as secret]))
+    [dda.pallet.commons.external-config :as ext-config]))
+    [dda.pallet.commons.secret :as secret]
 
 ; TODO: refactor - move to config commons
 (def AwsContext
@@ -50,6 +51,11 @@
 ; TODO: refactor - move to config commons
 (def Targets {:context AwsContext
               :node-spec AwsNodeSpec})
+
+; TODO: refactor - move to config commons
+(s/defn ^:always-validate load-targets :- Targets
+  [file-name :- s/Str]
+  (ext-config/parse-config file-name))
 
 (defn meissa-unencrypted-context
   []
