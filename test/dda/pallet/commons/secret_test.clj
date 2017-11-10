@@ -15,7 +15,7 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.common.secret-test
+(ns dda.pallet.commons.secret-test
   (:require
     [clojure.test :refer :all]
     [dda.pallet.commons.secret :as sut]))

@@ -16,6 +16,7 @@
 (ns dda.pallet.commons.secret
   (:require
     [schema.core :as s]
+    [pallet.configure :as pc]
     [dda.pallet.commons.passwordstore-adapter :as adapter]
     [dda.pallet.commons.encrypted-credentials :as crypto]))
 
@@ -62,7 +63,7 @@
    passphrase :- s/Str]
   (let [{:keys [service-path record-element key-id]
          :or {service-path [:services :aws]}} secret
-         aws-encrypted-credentials (get-in (pallet.configure/pallet-config) service-path)
+         aws-encrypted-credentials (get-in (pc/pallet-config) service-path)
          aws-decrypted-credentials (crypto/decrypt
                                       (crypto/get-secret-key
                                         {:user-home (str (System/getenv "HOME") "/")
