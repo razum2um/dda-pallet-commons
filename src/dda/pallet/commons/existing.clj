@@ -21,12 +21,27 @@
    [pallet.compute :as compute]
    [dda.pallet.commons.external-config :as ext-config]))
 
+; TODO: refactor - move to config commons
 (def ExistingNode
  {:node-name s/Str
   :node-ip s/Str})
 
+; TODO: refactor - move to config commons
 (def ExistingNodes
   {:s/Keyword [ExistingNode]})
+
+; TODO: refactor - move to config commons
+(def ProvisioningUser {:login s/Str
+                       (s/optional-key :password) s/Str})
+
+; TODO: refactor - move to config commons
+(def Targets {:existing [ExistingNode]
+              :provisioning-user ProvisioningUser})
+
+; TODO: refactor - move to config commons
+(s/defn ^:always-validate load-targets :- Targets
+  [file-name :- s/Str]
+  (ext-config/parse-config file-name))
 
 (s/defn ^:always-validate single-remote-node
   [group :- s/Keyword
@@ -37,12 +52,6 @@
       (name group)
       node-ip
       :ubuntu)))
-
-(def ProvisioningUser {:login s/Str
-                       (s/optional-key :password) s/Str})
-
-(def Targets {:existing [ExistingNode]
-              :provisioning-user ProvisioningUser})
 
 (s/defn ^:always-validate remote-node
   ([node-ip node-name group-name]
@@ -73,7 +82,3 @@
 (defn node-spec [provisioning-user]
   {:image
    {:login-user provisioning-user}})
-
-(s/defn ^:always-validate load-targets :- Targets
-  [file-name :- s/Str]
-  (ext-config/parse-config file-name))
