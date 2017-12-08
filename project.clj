@@ -1,4 +1,4 @@
-(defproject dda/dda-pallet-commons "0.6.1-SNAPSHOT"
+(defproject dda/dda-pallet-commons "0.7.0-SNAPSHOT"
   :description "common utils for dda pallet"
   :url "https://www.domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
@@ -8,7 +8,7 @@
                  [prismatic/schema "1.1.7"]
                  [mvxcvi/clj-pgp "0.9.0"]
                  [com.palletops/pallet "0.8.12"]
-                 [dda/dda-config-commons "0.2.3"]
+                 [dda/dda-config-commons "0.3.0-SNAPSHOT"]
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [keypin "0.7.1"]]
   :source-paths ["src" "test-utils"]
