@@ -15,7 +15,7 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.commons.stevedore-test
+(ns dda.pallet.commons.stevedore-test-utils
   (:require
     [clojure.test :refer :all]
     [clojure.java.io :as io]))

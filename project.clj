@@ -41,4 +41,5 @@
                        :aot :all
                        :main dda.pallet.dda-managed-ide.main
                        :dependencies [[org.clojure/tools.cli "0.3.5"]]}}
+  :classifiers {:tests :test}
   :local-repo-classpath true)

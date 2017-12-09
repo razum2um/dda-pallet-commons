@@ -21,11 +21,19 @@
     [dda.pallet.commons.encrypted-credentials :as crypto]))
 
 (def PalletSecret
-  (merge
-    secret/Secret
-    {(s/optional-key :pallet-secret) {:service-path [s/Keyword]
-                                      :record-element (s/enum :account :secret)
-                                      :key-id s/Str}}))
+  {(s/optional-key :pallet-secret) {:service-path [s/Keyword]
+                                    :record-element (s/enum :account :secret)
+                                    :key-id s/Str}})
+
+(def SecretSchemas
+  (into
+    secret/SecretSchemas
+    PalletSecret))
+
+(s/defn resolve-secret
+  [secret :- PalletSecret
+   & options]
+  (apply secret/resolve-secret secret options))
 
 (s/defmethod ^:always-validate secret/resolve-secret :pallet-secret
   [secret :- PalletSecret
