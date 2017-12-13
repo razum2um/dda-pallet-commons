@@ -8,7 +8,7 @@
                  [prismatic/schema "1.1.7"]
                  [mvxcvi/clj-pgp "0.9.0"]
                  [com.palletops/pallet "0.8.12"]
-                 [dda/dda-config-commons "0.3.0-SNAPSHOT"]
+                 [dda/dda-config-commons "0.3.0"]
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [keypin "0.7.1"]]
   :source-paths ["main/src"]
