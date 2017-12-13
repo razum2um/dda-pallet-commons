@@ -17,52 +17,28 @@
   (:require
     [schema.core :as s]
     [pallet.configure :as pc]
-    [dda.pallet.commons.passwordstore-adapter :as adapter]
+    [dda.config.commons.secret :as secret]
     [dda.pallet.commons.encrypted-credentials :as crypto]))
 
-;TODO: move to config.commons
-(def Secret {(s/optional-key :plain) s/Str
-             (s/optional-key :password-store-single) s/Str
-             (s/optional-key :password-store-multi) s/Str})
-
 (def PalletSecret
-  (merge
-    Secret
-    {(s/optional-key :pallet-secret) {:service-path [s/Keyword]
-                                      :record-element (s/enum :account :secret)
-                                      :key-id s/Str}}))
+  {:pallet-secret {:service-path [s/Keyword]
+                   :record-element (s/enum :account :secret)
+                   :key-id s/Str}})
 
-;TODO: move to config.commons
-(s/defn dispatch-by-secret-type :- s/Keyword
-  "Dispatcher for secret resolving. Also does a
-   schema validation of arguments."
-  [secret :- Secret
-   & _]
-  (first (keys secret)))
+(def SecretSchemas
+  (into
+    secret/SecretSchemas
+    [PalletSecret]))
 
-;TODO: move to config.commons
-(defmulti resolve-secret
-  "resolves the secret"
-  dispatch-by-secret-type)
-(s/defmethod ^:always-validate resolve-secret :default
-  [secret :- Secret]
-  (throw (UnsupportedOperationException. (str "Not impleneted yet: resolve-secret for " secret))))
+(def Secret
+    (apply s/either SecretSchemas))
 
-;TODO: move to config.commons
-(s/defmethod ^:always-validate resolve-secret :plain
-  [secret :- Secret
-   & _]
-  (:plain secret))
-(s/defmethod ^:always-validate resolve-secret :password-store-single
-  [secret :- Secret
-   & _]
-  (adapter/get-secret-wo-newline (:password-store-single secret)))
-(s/defmethod ^:always-validate resolve-secret :password-store-multi
-  [secret :- Secret
-   & _]
-  (adapter/get-secret (:password-store-multi secret)))
+(s/defn resolve-secret
+  [secret :- PalletSecret
+   & options]
+  (apply secret/resolve-secret secret options))
 
-(s/defmethod ^:always-validate resolve-secret :pallet-secret
+(s/defmethod ^:always-validate secret/resolve-secret :pallet-secret
   [secret :- PalletSecret
    & options]
   (let [{:keys [passphrase]} options

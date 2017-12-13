@@ -1,4 +1,4 @@
-(defproject dda/dda-pallet-commons "0.6.1-SNAPSHOT"
+(defproject dda/dda-pallet-commons "0.7.1-SNAPSHOT"
   :description "common utils for dda pallet"
   :url "https://www.domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
@@ -8,25 +8,38 @@
                  [prismatic/schema "1.1.7"]
                  [mvxcvi/clj-pgp "0.9.0"]
                  [com.palletops/pallet "0.8.12"]
-                 [dda/dda-config-commons "0.2.3"]
+                 [dda/dda-config-commons "0.3.0"]
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [keypin "0.7.1"]]
-  :source-paths ["src" "test-utils"]
+  :source-paths ["main/src"]
+  :resource-paths ["main/resources"]
   :repositories [["snapshots" :clojars]
                  ["releases" :clojars]]
   :deploy-repositories [["snapshots" :clojars]
                         ["releases" :clojars]]
-  :profiles {:dev
-             {:dependencies
-              [[org.clojure/test.check "0.10.0-alpha2"]
-               [com.palletops/stevedore "0.8.0-beta.7"]
-               [com.palletops/pallet "0.8.12" :classifier "tests"]]}
-                                        ;[mvxcvi/clj-pgp "0.9.0-SNAPSHOT" :classifier "tests"]
-
-             :plugins [[lein-sub "0.3.0"]]
-             :leiningen/reply
-             {:dependencies [[org.slf4j/jcl-over-slf4j "1.8.0-beta0"]]
-              :exclusions [commons-logging]}}
-  :local-repo-classpath true
-  :classifiers {:tests {:source-paths ^:replace ["test"]
-                        :resource-paths ^:replace []}})
+  :profiles {:dev {:source-paths ["integration/src"
+                                  "test/src"
+                                  "uberjar/src"]
+                   :resource-paths ["integration/resources"
+                                    "test/resources"]
+                   :dependencies
+                   [[org.clojure/test.check "0.10.0-alpha2"]
+                    [com.palletops/stevedore "0.8.0-beta.7"]
+                    [com.palletops/pallet "0.8.12" :classifier "tests"]
+                    [ch.qos.logback/logback-classic "1.2.3"]
+                    [org.slf4j/jcl-over-slf4j "1.8.0-beta0"]]
+                   :plugins
+                   [[lein-sub "0.3.0"]]
+                   :leiningen/reply
+                   {:dependencies [[org.slf4j/jcl-over-slf4j "1.8.0-beta0"]]
+                    :exclusions [commons-logging]}}
+             :test {:test-paths ["test/src"]
+                    :resource-paths ["test/resources"]
+                    :dependencies [[com.palletops/pallet "0.8.12" :classifier "tests"]]}
+             :uberjar {:source-paths ["uberjar/src"]
+                       :resource-paths ["uberjar/resources"]
+                       :aot :all
+                       :main dda.pallet.dda-managed-ide.main
+                       :dependencies [[org.clojure/tools.cli "0.3.5"]]}}
+  :classifiers {:tests :test}
+  :local-repo-classpath true)

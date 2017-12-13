@@ -14,19 +14,23 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.commons.passwordstore-adapter
+
+(ns dda.pallet.commons.stevedore-test-utils
   (:require
-   [schema.core :as s]
-   [clojure.string :as string]
-   [clojure.java.shell :as sh]))
+    [clojure.test :refer :all]
+    [clojure.java.io :as io]))
 
-(s/defn get-secret :- s/Str
-  [path :- s/Str]
-  (let [result (sh/sh "pass" path)]
-    (if (= 0 (:exit result))
-        (:out result)
-        (throw (RuntimeException. (str "error in path " path "\n" (:err result)))))))
+(defn source-comment-re-str []
+  (str "(?sm) *# " (.getName (io/file *file*)) ":\\d+\n?"))
 
-(s/defn get-secret-wo-newline :- s/Str
-  [path :- s/Str]
-  (string/trim-newline (get-secret path)))
+;;; a test method that adds a check for source line comment
+(defmethod assert-expr 'script= [msg form]
+  (let [[_ expected expr] form]
+    `(let [re# (re-pattern ~(source-comment-re-str))
+           expected# (-> ~expected string/trim)
+           actual# (-> ~expr (string/replace re# "") string/trim)]
+       (if (= expected# actual#)
+         (do-report
+          {:type :pass :message ~msg :expected expected# :actual actual#})
+         (do-report
+          {:type :fail :message ~msg :expected expected# :actual actual#})))))

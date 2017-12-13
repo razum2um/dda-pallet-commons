@@ -18,19 +18,20 @@
 (ns dda.pallet.commons.secret-test
   (:require
     [clojure.test :refer :all]
+    [schema.core :as s]
     [dda.pallet.commons.secret :as sut]))
-
-(defmethod sut/resolve-secret :test-resolver
-  [secret
-   & _]
-  "success")
 
 (def secret
   {:plain "test"})
 
-(deftest test-secret-resolving
+(deftest test-schema
   (testing
-    (is (= :plain (sut/dispatch-by-secret-type secret)))
-    (is (thrown? Exception (sut/resolve-secret {:not-implemented ""})))
-    (is (= "success" (sut/resolve-secret {:test-resolver ""})))
-    (is (= "test" (sut/resolve-secret secret)))))
+    (is (s/validate sut/Secret secret))
+    (is (s/validate sut/Secret  {:password-store-multi "path"}))
+    (is (s/validate sut/Secret  {:password-store-single "path"}))
+    (is (s/validate sut/Secret  {:password-store-record {:path "path"
+                                                         :element :login}}))
+    (is (s/validate sut/Secret  {:pallet-secret {:service-path [:p]
+                                                 :record-element :account
+                                                 :key-id "k"}}))
+    (is (thrown? Exception (s/validate sut/Secret {:not-implemented ""})))))

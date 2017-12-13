@@ -24,8 +24,8 @@
 
 ; TODO: refactor - move to config commons
 (def AwsContext
- {:key-id secret/PalletSecret
-  :key-secret secret/PalletSecret
+ {:key-id secret/Secret
+  :key-secret secret/Secret
   :region s/Str
   :subnet-ids [s/Str]})
 
