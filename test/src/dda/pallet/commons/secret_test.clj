@@ -38,7 +38,7 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Tests for replace-secret-schema ;;;
+;;; Tests for create-resolved-schema ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def schema1
@@ -75,18 +75,18 @@
 (def config2
   [{:plain "secret"} {:plain "secret2"}])
   
-(deftest test-schema-resolving
+(deftest test-create-resolved-schema
   (testing
-    (is (= s/Str (sut/replace-secret-schema sut/Secret)))
-    (is (= {s/Keyword s/Str} (sut/replace-secret-schema {s/Keyword sut/Secret})))
-    (is (= [s/Str] (sut/replace-secret-schema [sut/Secret])))
-    (is (= schema1-resolved (sut/replace-secret-schema schema1)))))
+    (is (= s/Str (sut/create-resolved-schema sut/Secret)))
+    (is (= {s/Keyword s/Str} (sut/create-resolved-schema {s/Keyword sut/Secret})))
+    (is (= [s/Str] (sut/create-resolved-schema [sut/Secret])))
+    (is (= schema1-resolved (sut/create-resolved-schema schema1)))))
 
-(deftest test-generic-secret-resolving
+(deftest test-resolve-secrets
   (testing
     (is (s/validate schema1 config1))
     (is (s/validate schema1 config2))
-    (is (s/validate schema1-resolved (sut/resolve-secrets schema1 config1)))
-    (is (s/validate schema1-resolved (sut/resolve-secrets schema1 config2)))
-    (is (thrown? Exception (sut/resolve-secrets schema1 (merge config1 {:a "no secret"}))))
+    (is (s/validate schema1-resolved (sut/resolve-secrets config1 schema1)))
+    (is (s/validate schema1-resolved (sut/resolve-secrets config2 schema1)))
+    (is (thrown? Exception (sut/resolve-secrets (merge config1 {:a "no secret"}) schema1)))
     ))
