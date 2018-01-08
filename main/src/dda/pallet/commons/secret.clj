@@ -16,7 +16,6 @@
 (ns dda.pallet.commons.secret
   (:require
     [schema.core :as s]
-    [schema.spec.core :as spec]
     [pallet.configure :as pc]
     [dda.config.commons.secret :as secret]
     [dda.pallet.commons.encrypted-credentials :as crypto]))
@@ -54,28 +53,13 @@
                                       passphrase)]
     (get-in aws-decrypted-credentials record-element)))
 
-(defn replace-secret-schema
-  "Replaces all schema types 'Secret' with schema type 'Str' in schema-config."
+(defn create-resolved-schema
+  "Replaces all Secrets within the given 'schema-config' by Str."
   [schema-config]
-  (clojure.walk/postwalk
-    (fn [x] 
-      (if (= x Secret)
-        s/Str
-        x))
-    schema-config))
+  (secret/create-custom-resolved-schema schema-config Secret))
 
 (defn resolve-secrets
-  "Takes a schema (secret-schema) and a corresponding config.
-   Resolves all Secrets in the given config according to the schema."
-  [secret-schema config]
-  (s/validate secret-schema config)
-  ((spec/run-checker
-    (fn [s params]
-      (let [walk (spec/checker (s/spec s) params)]
-        (fn [x]
-          (if (= s Secret)
-            (resolve-secret x)
-            (walk x)))))
-    true
-    secret-schema)
-    config))
+  "Takes a config and a corresponding schema.
+   Resolves all Secrets within the config"
+  [config schema]
+  (secret/resolve-custom-secrets config schema Secret))
