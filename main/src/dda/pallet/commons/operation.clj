@@ -76,6 +76,20 @@ function awaits the login user set in (-> group :image :login-user)."
        :phase '(:settings :init :install :configure)
        :user (provision-user group)))))
 
+(defn do-app-rollout
+    "app-rollout applies the settings and app-rollout phase to a target.
+function awaits the login user set in (-> group :image :login-user)."
+  [provider group & options]
+  (let [{:keys [summarize-session]
+         :or {summarize-session true}} options]
+   (session-out
+     summarize-session
+     (api/converge
+       group
+       :compute provider
+       :phase '(:settings :app-rollout)
+       :user (provision-user group)))))
+
 (defn do-server-test
     "applies only the settings and test (without side effects by convention) phase of group to a target.
 function awaits the login user set in (-> group :image :login-user)."
