@@ -36,7 +36,6 @@
                                                  :key-id "k"}}))
     (is (thrown? Exception (s/validate sut/Secret {:not-implemented ""})))))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Tests for create-resolved-schema ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
