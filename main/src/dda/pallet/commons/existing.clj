@@ -36,7 +36,7 @@
 
 ; TODO: refactor - move to config commons
 (def Targets {:existing [ExistingNode]
-              :provisioning-user ProvisioningUser})
+              (s/optional-key :provisioning-user) ProvisioningUser})
 
 ; TODO: refactor - move to config commons
 (s/defn ^:always-validate load-targets :- Targets

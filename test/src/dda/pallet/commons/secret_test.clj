@@ -35,3 +35,57 @@
                                                  :record-element :account
                                                  :key-id "k"}}))
     (is (thrown? Exception (s/validate sut/Secret {:not-implemented ""})))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Tests for create-resolved-schema ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def schema1
+  (s/either
+    {:a sut/Secret
+     :b s/Any
+     :c (s/either s/Int sut/Secret)
+     :d [sut/Secret]
+     (s/optional-key :e) sut/Secret
+     (s/optional-key :f) {:x s/Str
+                          :y sut/Secret}}
+    [sut/Secret]))
+
+(def schema1-resolved
+  (s/either
+    {:a s/Str
+     :b s/Any
+     :c (s/either s/Int s/Str)
+     :d [s/Str]
+     (s/optional-key :e) s/Str
+     (s/optional-key :f) {:x s/Str
+                          :y s/Str}}
+    [s/Str]))
+
+(def config1
+  {:a {:plain "first secret"}
+   :b 42
+   :c 24
+   :d [{:plain "secret"} {:plain "secret2"}]
+   :e {:plain "next secret"}
+   :f {:x "no secret"
+       :y {:plain "secret"}}})
+
+(def config2
+  [{:plain "secret"} {:plain "secret2"}])
+  
+(deftest test-create-resolved-schema
+  (testing
+    (is (= s/Str (sut/create-resolved-schema sut/Secret)))
+    (is (= {s/Keyword s/Str} (sut/create-resolved-schema {s/Keyword sut/Secret})))
+    (is (= [s/Str] (sut/create-resolved-schema [sut/Secret])))
+    (is (= schema1-resolved (sut/create-resolved-schema schema1)))))
+
+(deftest test-resolve-secrets
+  (testing
+    (is (s/validate schema1 config1))
+    (is (s/validate schema1 config2))
+    (is (s/validate schema1-resolved (sut/resolve-secrets config1 schema1)))
+    (is (s/validate schema1-resolved (sut/resolve-secrets config2 schema1)))
+    (is (thrown? Exception (sut/resolve-secrets (merge config1 {:a "no secret"}) schema1)))
+    ))

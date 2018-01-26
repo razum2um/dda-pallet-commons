@@ -1,4 +1,4 @@
-(defproject dda/dda-pallet-commons "0.7.1-SNAPSHOT"
+(defproject dda/dda-pallet-commons "1.0.1-SNAPSHOT"
   :description "common utils for dda pallet"
   :url "https://www.domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
@@ -8,8 +8,8 @@
                  [prismatic/schema "1.1.7"]
                  [mvxcvi/clj-pgp "0.9.0"]
                  [com.palletops/pallet "0.8.12"]
-                 [dda/dda-config-commons "0.3.0"]
-                 [ch.qos.logback/logback-classic "1.2.3"]
+                 [dda/dda-config-commons "1.0.3"]
+                 [ch.qos.logback/logback-classic "1.3.0-alpha0"]
                  [keypin "0.7.1"]]
   :source-paths ["main/src"]
   :resource-paths ["main/resources"]
@@ -26,7 +26,7 @@
                    [[org.clojure/test.check "0.10.0-alpha2"]
                     [com.palletops/stevedore "0.8.0-beta.7"]
                     [com.palletops/pallet "0.8.12" :classifier "tests"]
-                    [ch.qos.logback/logback-classic "1.2.3"]
+                    [ch.qos.logback/logback-classic "1.3.0-alpha0"]
                     [org.slf4j/jcl-over-slf4j "1.8.0-beta0"]]
                    :plugins
                    [[lein-sub "0.3.0"]]

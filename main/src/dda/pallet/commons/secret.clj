@@ -52,3 +52,14 @@
                                       aws-encrypted-credentials
                                       passphrase)]
     (get-in aws-decrypted-credentials record-element)))
+
+(defn create-resolved-schema
+  "Replaces all Secrets within the given 'schema-config' by Str."
+  [schema-config]
+  (secret/create-custom-resolved-schema schema-config Secret))
+
+(defn resolve-secrets
+  "Takes a config and a corresponding schema.
+   Resolves all Secrets within the config"
+  [config schema]
+  (secret/resolve-custom-secrets config schema Secret))
