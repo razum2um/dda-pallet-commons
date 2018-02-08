@@ -90,7 +90,7 @@ function awaits the login user set in (-> group :image :login-user)."
        :phase '(:settings :app-rollout)
        :user (provision-user group)))))
 
-(defn do-server-test
+(defn do-test
     "applies only the settings and test (without side effects by convention) phase of group to a target.
 function awaits the login user set in (-> group :image :login-user)."
   [provider group & options]
