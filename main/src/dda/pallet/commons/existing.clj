@@ -19,31 +19,43 @@
    [schema.core :as s]
    [pallet.compute.node-list :as node-list]
    [pallet.compute :as compute]
+   [dda.pallet.commons.secret :as secret]
    [dda.pallet.commons.external-config :as ext-config]))
 
-; TODO: refactor - move to config commons
 (def ExistingNode
- {:node-name s/Str
-  :node-ip s/Str})
+  "Represents a target node with ip and its name."
+  {:node-name s/Str
+   :node-ip s/Str})
 
-; TODO: refactor - move to config commons
 (def ExistingNodes
-  {:s/Keyword [ExistingNode]})
+  "A sequence of ExistingNodes."
+  {s/Keyword [ExistingNode]})
 
-; TODO: refactor - move to config commons
-(def ProvisioningUser {:login s/Str
-                       (s/optional-key :password) s/Str})
+(def ProvisioningUser
+  "User used for provisioning."
+  {:login s/Str
+   (s/optional-key :password) secret/Secret})
 
-; TODO: refactor - move to config commons
-(def Targets {:existing [ExistingNode]
-              (s/optional-key :provisioning-user) ProvisioningUser})
+(def Targets
+  "Targets to be used during provisioning."
+  {:existing [ExistingNode]
+   (s/optional-key :provisioning-user) ProvisioningUser})
 
-; TODO: refactor - move to config commons
-(s/defn ^:always-validate load-targets :- Targets
+(def ProvisioningUserResolved (secret/create-resolved-schema ProvisioningUser))
+
+(def TargetsResolved (secret/create-resolved-schema Targets))
+
+(s/defn resolve-targets :- TargetsResolved
+  [targets :- Targets]
+  (secret/resolve-secrets targets Targets))
+
+(s/defn ^:always-validate
+  load-targets :- Targets
   [file-name :- s/Str]
   (ext-config/parse-config file-name))
 
-(s/defn ^:always-validate single-remote-node
+(s/defn ^:always-validate
+  single-remote-node
   [group :- s/Keyword
    existing-node :- ExistingNode]
   (let [{:keys [node-name node-ip]} existing-node]
@@ -53,7 +65,8 @@
       node-ip
       :ubuntu)))
 
-(s/defn ^:always-validate remote-node
+(s/defn ^:always-validate
+  remote-node
   ([node-ip node-name group-name]
    (node-list/make-node
      node-name
@@ -64,7 +77,8 @@
     existing-nodes :- [ExistingNode]]
    (map #(single-remote-node group %) existing-nodes)))
 
-(s/defn provider
+(s/defn ^:always-validate
+  provider
   ([provisioning-ip :- s/Str
     node-id :- s/Str
     group-name  :- s/Str]

@@ -38,7 +38,8 @@
    & options]
   (apply secret/resolve-secret secret options))
 
-(s/defmethod ^:always-validate secret/resolve-secret :pallet-secret
+(s/defmethod ^:always-validate
+  secret/resolve-secret :pallet-secret
   [secret :- PalletSecret
    & options]
   (let [{:keys [passphrase]} options
