@@ -19,27 +19,33 @@
    [schema.core :as s]
    [pallet.compute.node-list :as node-list]
    [pallet.compute :as compute]
+   [dda.pallet.commons.secret :as secret]
    [dda.pallet.commons.external-config :as ext-config]))
 
-; TODO: refactor - move to config commons
 (def ExistingNode
  {:node-name s/Str
   :node-ip s/Str})
 
-; TODO: refactor - move to config commons
 (def ExistingNodes
   {s/Keyword [ExistingNode]})
 
-; TODO: refactor - move to config commons
 (def ProvisioningUser {:login s/Str
-                       (s/optional-key :password) s/Str})
+                       (s/optional-key :password) secret/Secret})
 
-; TODO: refactor - move to config commons
 (def Targets {:existing [ExistingNode]
               (s/optional-key :provisioning-user) ProvisioningUser})
 
+(def ProvisioningUserResolved (secret/create-resolved-schema ProvisioningUser))
+
+(def TargetsResolved (secret/create-resolved-schema Targets))
+
+(s/defn resolve-targets :- TargetsResolved
+  [targets :- Targets]
+  (secret/resolve-secrets targets Targets))
+
 ; TODO: refactor - move to config commons
-(s/defn ^:always-validate load-targets :- Targets
+(s/defn ^:always-validate
+  load-targets :- Targets
   [file-name :- s/Str]
   (ext-config/parse-config file-name))
 
