@@ -49,7 +49,6 @@
   [targets :- Targets]
   (secret/resolve-secrets targets Targets))
 
-; TODO: refactor - move to config commons
 (s/defn ^:always-validate
   load-targets :- Targets
   [file-name :- s/Str]
