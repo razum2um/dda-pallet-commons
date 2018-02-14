@@ -23,17 +23,23 @@
    [dda.pallet.commons.external-config :as ext-config]))
 
 (def ExistingNode
- {:node-name s/Str
-  :node-ip s/Str})
+  "Represents a target node with ip and its name."
+  {:node-name s/Str
+   :node-ip s/Str})
 
 (def ExistingNodes
+  "A sequence of ExistingNodes."
   {s/Keyword [ExistingNode]})
 
-(def ProvisioningUser {:login s/Str
-                       (s/optional-key :password) secret/Secret})
+(def ProvisioningUser
+  "User used for provisioning."
+  {:login s/Str
+   (s/optional-key :password) secret/Secret})
 
-(def Targets {:existing [ExistingNode]
-              (s/optional-key :provisioning-user) ProvisioningUser})
+(def Targets
+  "Targets to be used during provisioning."
+  {:existing [ExistingNode]
+   (s/optional-key :provisioning-user) ProvisioningUser})
 
 (def ProvisioningUserResolved (secret/create-resolved-schema ProvisioningUser))
 
