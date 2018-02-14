@@ -26,9 +26,9 @@
     session))
 
 (defn- provision-user [group]
-  (let [provision-user (-> group :image :login-user)]
+  (let [provision-user (get-in group [:image :login-user])]
     (cond
-      (empty? provision-user) (api/make-user "pallet")
+      (empty? provision-user) nil
       (string? provision-user) (api/make-user provision-user :no-sudo (= provision-user "root"))
       (map? provision-user) (let [login (-> provision-user :login)
                                   pwd (-> provision-user :password)]
@@ -39,67 +39,97 @@
 function awaits the login user set in (-> group :image :login-user)."
   [provider group & options]
   (let [{:keys [summarize-session]
-         :or {summarize-session true}} options]
+         :or {summarize-session true}} options
+          user (provision-user group)]
     (session-out
       summarize-session
-      (api/lift
-        group
-        :compute provider
-        :phase '(:settings :configure)
-        :user (provision-user group)))))
+      (if (some? user)
+        (api/lift
+          group
+          :compute provider
+          :phase '(:settings :configure)
+          :user (provision-user group))
+        (api/lift
+          group
+          :compute provider
+          :phase '(:settings :configure))))))
 
 (defn do-apply-install
     "applies the settings, init, install and configuration to a target.
 function awaits the login user set in (-> group :image :login-user)."
   [provider group & options]
   (let [{:keys [summarize-session]
-         :or {summarize-session true}} options]
+         :or {summarize-session true}} options
+         user (provision-user group)]
    (session-out
       summarize-session
-      (api/lift
-        group
-        :compute provider
-        :phase '(:settings :init :install :configure)
-        :user (provision-user group)))))
+      (if (some? user)
+        (api/lift
+          group
+          :compute provider
+          :phase '(:settings :init :install :configure)
+          :user (provision-user group))
+        (api/lift
+          group
+          :compute provider
+          :phase '(:settings :init :install :configure))))))
 
 (defn do-converge-install
     "Converges [count] nodes and applies the settings, init, install and configuration phase to a target.
 function awaits the login user set in (-> group :image :login-user)."
   [provider group & options]
   (let [{:keys [summarize-session]
-         :or {summarize-session true}} options]
+         :or {summarize-session true}} options
+         user (provision-user group)]
    (session-out
      summarize-session
-     (api/converge
-       group
-       :compute provider
-       :phase '(:settings :init :install :configure)
-       :user (provision-user group)))))
+     (if (some? user)
+       (api/converge
+         group
+         :compute provider
+         :phase '(:settings :init :install :configure)
+         :user (provision-user group))
+       (api/converge
+         group
+         :compute provider
+         :phase '(:settings :init :install :configure))))))
 
 (defn do-app-rollout
     "app-rollout applies the settings and app-rollout phase to a target.
 function awaits the login user set in (-> group :image :login-user)."
   [provider group & options]
   (let [{:keys [summarize-session]
-         :or {summarize-session true}} options]
+         :or {summarize-session true}} options
+         user (provision-user group)]
    (session-out
      summarize-session
-     (api/converge
-       group
-       :compute provider
-       :phase '(:settings :app-rollout)
-       :user (provision-user group)))))
+     (if (some? user)
+       (api/converge
+         group
+         :compute provider
+         :phase '(:settings :app-rollout)
+         :user (provision-user group))
+       (api/converge
+         group
+         :compute provider
+         :phase '(:settings :app-rollout))))))
 
 (defn do-test
     "applies only the settings and test (without side effects by convention) phase of group to a target.
 function awaits the login user set in (-> group :image :login-user)."
   [provider group & options]
   (let [{:keys [summarize-session]
-         :or {summarize-session true}} options]
+         :or {summarize-session true}} options
+         user (provision-user group)]
    (session-out
      summarize-session
-     (api/lift
-       group
-       :compute provider
-       :phase '(:settings :test)
-       :user (provision-user group)))))
+     (if (some? user)
+       (api/lift
+         group
+         :compute provider
+         :phase '(:settings :test)
+         :user (provision-user group))
+       (api/lift
+         group
+         :compute provider
+         :phase '(:settings :test))))))
