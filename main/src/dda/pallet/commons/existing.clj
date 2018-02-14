@@ -28,7 +28,7 @@
 
 ; TODO: refactor - move to config commons
 (def ExistingNodes
-  {:s/Keyword [ExistingNode]})
+  {s/Keyword [ExistingNode]})
 
 ; TODO: refactor - move to config commons
 (def ProvisioningUser {:login s/Str
@@ -43,7 +43,8 @@
   [file-name :- s/Str]
   (ext-config/parse-config file-name))
 
-(s/defn ^:always-validate single-remote-node
+(s/defn ^:always-validate
+  single-remote-node
   [group :- s/Keyword
    existing-node :- ExistingNode]
   (let [{:keys [node-name node-ip]} existing-node]
@@ -53,7 +54,8 @@
       node-ip
       :ubuntu)))
 
-(s/defn ^:always-validate remote-node
+(s/defn ^:always-validate
+  remote-node
   ([node-ip node-name group-name]
    (node-list/make-node
      node-name
@@ -64,7 +66,8 @@
     existing-nodes :- [ExistingNode]]
    (map #(single-remote-node group %) existing-nodes)))
 
-(s/defn provider
+(s/defn ^:always-validate
+  provider
   ([provisioning-ip :- s/Str
     node-id :- s/Str
     group-name  :- s/Str]
