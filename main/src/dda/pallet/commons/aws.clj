@@ -29,12 +29,6 @@
   :region s/Str
   :subnet-ids [s/Str]})
 
-(def AwsContextResolved
- {:key-id s/Str
-  :key-secret s/Str
-  :region s/Str
-  :subnet-ids [s/Str]})
-
 ; TODO: refactor - move to config commons
 (def ProvisioningUser {:login s/Str
                        :ssh-key-name s/Str})
@@ -52,12 +46,23 @@
 (def Targets {:context AwsContext
               :node-spec AwsNodeSpec})
 
+(def AwsContextResolved (secret/create-resolved-schema AwsContext))
+
+(def TargetsResolved (secret/create-resolved-schema Targets))
+
+(s/defn ^:always-validate
+  resolve-targets :- TargetsResolved
+  [targets :- Targets]
+  (secret/resolve-secrets targets Targets))
+
 ; TODO: refactor - move to config commons
-(s/defn ^:always-validate load-targets :- Targets
+(s/defn ^:always-validate
+  load-targets :- Targets
   [file-name :- s/Str]
   (ext-config/parse-config file-name))
 
-(s/defn ^:always-validate meissa-unencrypted-context :- AwsContext
+(s/defn ^:always-validate
+  meissa-unencrypted-context :- AwsContext
   []
   (let
     [aws-decrypted-credentials (get-in (pallet.configure/pallet-config) [:services :aws])]
@@ -66,7 +71,8 @@
      :region "eu-central-1"
      :subnet-ids ["subnet-f929df91"]}))
 
-(s/defn ^:always-validate meissa-encrypted-context :- AwsContext
+(s/defn ^:always-validate
+  meissa-encrypted-context :- AwsContext
   [key-id :- s/Str]
   {:key-id {:pallet-secret {:service-path [:services :aws]
                             :record-element :account
@@ -77,7 +83,8 @@
    :region "eu-central-1"
    :subnet-ids ["subnet-f929df91"]})
 
-(s/defn meissa-default-node-spec :- AwsNodeSpec
+(s/defn
+  meissa-default-node-spec :- AwsNodeSpec
   [ssh-key-name :- s/Str]
   {:region "eu-central-1a"
    :ami-id "ami-82cf0aed"
@@ -87,7 +94,8 @@
    :provisioning-user {:login "ubuntu"
                        :ssh-key-name ssh-key-name}})
 
-(s/defn resolve-secrets :- AwsContextResolved
+(s/defn
+  resolve-secrets :- AwsContextResolved
   ([context :- AwsContext]
    (let [{:keys [key-id key-secret]} context]
      (merge
@@ -103,7 +111,7 @@
        {:key-id (secret/resolve-secret key-id :passphrase passphrase)
         :key-secret (secret/resolve-secret key-secret :passphrase passphrase)}))))
 
-(defn- realize-provider
+(defn provider
   [resolved-aws-context]
   (let [{:keys [key-id key-secret region subnet-ids]} resolved-aws-context]
     (compute/instantiate-provider
@@ -113,31 +121,8 @@
       :endpoint region
       :subnet-ids subnet-ids)))
 
-(s/defn ^:always-validate dispatch-by-argument-count :- s/Keyword
-  [& args]
-  (cond
-    (= (count args) 0) :unencrypted-context
-    (= (count args) 1) :external-encrypted-context
-    (= (count args) 3) :internal-encrypted-context))
-
-(defmulti provider dispatch-by-argument-count)
-(s/defmethod provider :unencrypted-context
-  [& _]
-  (realize-provider (resolve-secrets (meissa-unencrypted-context))))
-(s/defmethod ^:always-validate provider :external-encrypted-context
-  [context :- AwsContext
-   & _]
-  (realize-provider (resolve-secrets context)))
-(s/defmethod ^:always-validate provider :internal-encrypted-context
-  [key-id :- s/Str
-   passphrase :- s/Str
-   context :- AwsContext
-   & _]
-  (realize-provider (resolve-secrets
-                     (meissa-encrypted-context key-id)
-                     passphrase)))
-
-(s/defn ^:always-validate node-spec
+(s/defn ^:always-validate
+  node-spec
   [aws-node-spec :- AwsNodeSpec]
   (let [{:keys [region ami-id hardware-id security-group-ids
                 subnet-id provisioning-user]} aws-node-spec
