@@ -8,9 +8,9 @@
                  [prismatic/schema "1.1.7"]
                  [mvxcvi/clj-pgp "0.9.0"]
                  [com.palletops/pallet "0.8.12"]
-                 [dda/dda-config-commons "1.1.0"]
-                 [ch.qos.logback/logback-classic "1.3.0-alpha0"]
-                 [keypin "0.7.1"]]
+                 [dda/dda-config-commons "1.2.0-SNAPSHOT"]
+                 [ch.qos.logback/logback-classic "1.3.0-alpha4"]
+                 [keypin "0.7.2"]]
   :source-paths ["main/src"]
   :resource-paths ["main/resources"]
   :repositories [["snapshots" :clojars]
@@ -26,8 +26,8 @@
                    [[org.clojure/test.check "0.10.0-alpha2"]
                     [com.palletops/stevedore "0.8.0-beta.7"]
                     [com.palletops/pallet "0.8.12" :classifier "tests"]
-                    [ch.qos.logback/logback-classic "1.3.0-alpha0"]
-                    [org.slf4j/jcl-over-slf4j "1.8.0-beta0"]]
+                    [ch.qos.logback/logback-classic "1.3.0-alpha4"]
+                    [org.slf4j/jcl-over-slf4j "1.8.0-beta1"]]
                    :plugins
                    [[lein-sub "0.3.0"]]
                    :leiningen/reply
