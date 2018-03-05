@@ -1,3 +1,5 @@
+# Schema
+
 ```clojure
 (def ExistingNode
   "Represents a target node with ip and its name."
@@ -19,6 +21,7 @@
    (s/optional-key :provisioning-user) ProvisioningUser})  ; user can be ommited to execute on localhost with current user.
 ```
 
+# Example
 
 ```clojure
 {:existing [{:node-name "target1"                      ; semantic name (keep the default or use a name that suits you)
