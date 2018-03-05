@@ -28,7 +28,7 @@
    :results [{:target st/TargetSpec
               :target-type s/Any
               :plan-state s/Any
-              :result '(sr/ResultSpec)
+              :result [sr/ResultSpec]
               :phase s/Any}]
    :environment s/Any
    :initial-plan-state s/Any})
