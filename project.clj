@@ -24,8 +24,7 @@
                                     "test/resources"]
                    :dependencies
                    [[org.clojure/test.check "0.10.0-alpha2"]
-                    [com.palletops/stevedore "0.8.0-beta.7"]
-                    [com.palletops/pallet "0.8.12" :classifier "tests"]
+                    [dda/pallet "0.8.13-SNAPSHOT" :classifier "tests"]
                     [ch.qos.logback/logback-classic "1.3.0-alpha4"]
                     [org.slf4j/jcl-over-slf4j "1.8.0-beta1"]]
                    :plugins
