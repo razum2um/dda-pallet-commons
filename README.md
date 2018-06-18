@@ -8,9 +8,8 @@ Common utils for dda-pallet
 
 ## compatability
 dda-pallet is compatible to the following versions
- * pallet 0.8
- * clojure 1.7
- * (x)ubunutu 16.04
+ * pallet 0.9
+ * clojure 1.9
 
 ## Features
 * Encrypted Credential Managament
