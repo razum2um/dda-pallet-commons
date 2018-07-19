@@ -7,7 +7,7 @@
                  [org.clojure/tools.cli "0.3.7"]
                  [prismatic/schema "1.1.9"]
                  [mvxcvi/clj-pgp "0.9.0"]
-                 [dda/dda-config-commons "1.3.1"]
+                 [dda/dda-config-commons "1.4.0"]
                  [ch.qos.logback/logback-classic "1.3.0-alpha4"]
                  [dda/pallet "0.9.0"]
                  [keypin "0.7.4"]]
