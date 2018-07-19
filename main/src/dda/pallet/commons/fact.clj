@@ -45,13 +45,20 @@
   :exit s/Num
   :summary s/Str})
 
-(s/defn parse-exit-code :- s/Bool
+(s/defn
+  parse-result-boundaries :- s/Str
+  [result :- s/Str]
+  (second (re-find (re-matcher #"(?s).*\{.(.*).\}.*" result))))
+
+(s/defn
+  parse-exit-code :- s/Bool
   [input :- s/Str]
   (or
     (= "0" input)
     (= "0\n" input)))
 
-(s/defn fact-result :- FactResult
+(s/defn
+  fact-result :- FactResult
   [script-result :- ScriptResult
    context :- s/Str
    transform-fn]
@@ -71,9 +78,9 @@
      :summary (if (= 0 exit) "SUCCESSFUL" "ERROR")}))
 
 
-(s/defn collect-fact
+(s/defn
+  collect-fact
   "Gets a fact from target node based on output of script.
-   Exitcode <> 0 means fact is collected successfull.
    By convention the given script has no side effects on target system.
 
    `fact-key`
@@ -84,7 +91,6 @@
 
    `transform-fn`
    should be a fn transforming script output to a nested map."
-
   {:pallet/plan-fn true}
   [facility :- s/Keyword
    fact-key :- s/Keyword
@@ -92,13 +98,18 @@
    & options]
   (let [{:keys [transform-fn]
          :or {transform-fn nil}} options
-        script-result (actions/exec-script ~script)
+        script-result
+        (actions/exec-checked-script
+          (str "collect fact for facility: " facility " fact-key: " fact-key)
+          (println "{")
+          (~script)
+          (println "}"))
         fact-action-result (actions/as-action
                              (logging/debug "transforming fact script result")
                              (logging/debug "script result: " script-result)
                              (let
                                [fact-result (fact-result
-                                              @script-result
+                                              (parse-result-boundaries @script-result)
                                               (str "fact: " (name facility) "/" (name fact-key))
                                               transform-fn)]
                                (logging/debug "fact result: " fact-result)
@@ -106,9 +117,9 @@
     (crate/assoc-settings
          facility {fact-key fact-action-result} {:instance-id (crate/target-node)})))
 
-(s/defn collect-exit-code-fact
+(s/defn
+  collect-exit-code-fact
  "Gets a fact from target node based on output of a exit code echo script.
-  Exitcode <> 0 means fact is collected successfull.
   By convention the given script may not have side effects on target system.
 
   `fact-key`
@@ -121,7 +132,7 @@
     0 -> true
     everything else -> false
 
-  Result is stored in session as ExitCodeFactResult. Boolean autput is stored in :out
+  Result is stored in session as ExitCodeFactResult. Boolean output is stored in :out
 "
  [facility :- s/Keyword
   fact-key :- s/Keyword
