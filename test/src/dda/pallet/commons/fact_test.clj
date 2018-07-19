@@ -21,29 +21,43 @@
     [dda.pallet.commons.fact :as sut]))
 
 (def no-error-1
-  "{
+  "FACT_START
 0
-}")
+FACT_END")
 
 (def no-error-2
-  "{
+  "FACT_START
 0\n
-}")
+FACT_END")
 
 (def error
-  "{
+  "FACT_START
 3
-}")
+FACT_END")
+
+(def free-command
+  "[sudo] Passwort für initial: collect fact for facility: :dda-serverspec-fact fact-key: :dda.pallet.dda-serverspec-crate.infra.fact.command/command (fact.clj:105)...
+FACT_START
+find--absent
+find: ‘/absent’: Datei oder Verzeichnis nicht gefunden
+1
+----- command output separator -----
+FACT_END")
 
 (deftest test-parse-result-boundaries
   (testing
     "test parsing ls output"
-      (is (= "0"
-             (sut/parse-result-boundaries no-error-1)))
-     (is (= "0\n"
-            (sut/parse-result-boundaries no-error-2)))
-     (is (= "3"
-            (sut/parse-result-boundaries error)))))
+    (is (= "0"
+           (sut/parse-result-boundaries no-error-1)))
+    (is (= "0\n"
+           (sut/parse-result-boundaries no-error-2)))
+    (is (= "3"
+           (sut/parse-result-boundaries error)))
+    (is (= "find--absent
+find: ‘/absent’: Datei oder Verzeichnis nicht gefunden
+1
+----- command output separator -----"
+           (sut/parse-result-boundaries free-command)))))
 
 (deftest test-parse
   (testing

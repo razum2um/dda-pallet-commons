@@ -48,7 +48,7 @@
 (s/defn
   parse-result-boundaries :- s/Str
   [result :- s/Str]
-  (second (re-find (re-matcher #"(?s).*\{.(.*).\}.*" result))))
+  (second (re-find (re-matcher #"(?s).*FACT_START.(.*).FACT_END.*" result))))
 
 (s/defn
   parse-exit-code :- s/Bool
@@ -71,7 +71,7 @@
      :action-symbol action-symbol
      :script script
      :out (if (some? transform-fn)
-            (apply transform-fn (list out-raw))
+            (apply transform-fn (list (parse-result-boundaries out-raw)))
             out-raw)
      :out-raw  out-raw
      :exit exit
@@ -101,15 +101,15 @@
         script-result
         (actions/exec-checked-script
           (str "collect fact for facility: " facility " fact-key: " fact-key)
-          (println "{")
+          (println "FACT_START")
           (~script)
-          (println "}"))
+          (println "FACT_END"))
         fact-action-result (actions/as-action
                              (logging/debug "transforming fact script result")
                              (logging/debug "script result: " script-result)
                              (let
                                [fact-result (fact-result
-                                              (parse-result-boundaries @script-result)
+                                              @script-result
                                               (str "fact: " (name facility) "/" (name fact-key))
                                               transform-fn)]
                                (logging/debug "fact result: " fact-result)
